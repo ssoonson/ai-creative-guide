@@ -1,0 +1,944 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="초등 AI 창작 연수(이미지·음악·글쓰기 AI, 30초 미래 뉴스 실습)를 단계별로 따라 하는 안내 페이지">
+<style>
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; }
+img { max-width: 100%; }
+</style>
+<title>AI 창작 따라하기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky module tabs over a single reading column; each module owns one hue (image=coral, music=violet, story=green, news=blue) */
+:root {
+  --bg: #f6f7fa;
+  --surface: #ffffff;
+  --sunken: #eef0f5;
+  --ink: #1b2233;
+  --muted: #5b6478;
+  --line: #dde1ea;
+  --img: #e2553f;   --img-soft: #fdece8;
+  --mus: #6a4fd8;   --mus-soft: #eeeafd;
+  --sto: #1f8a5b;   --sto-soft: #e3f4ec;
+  --news: #1f62c9;  --news-soft: #e5eefc;
+  --acc: var(--ink); --acc-soft: var(--sunken);
+  --ok: #1f8a5b;
+  --display: "Do Hyeon", "Noto Sans KR", system-ui, sans-serif;
+  --body: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "Malgun Gothic", monospace;
+  --r: 12px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12151d; --surface: #1a1f2a; --sunken: #232937; --ink: #e8ebf2; --muted: #9aa3b6; --line: #2e3545;
+  --img: #ff7a63; --img-soft: #3a211d; --mus: #a690ff; --mus-soft: #2a2443; --sto: #4cc78f; --sto-soft: #183327;
+  --news: #6aa3ff; --news-soft: #1a2944; --ok: #4cc78f; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #12151d; --surface: #1a1f2a; --sunken: #232937; --ink: #e8ebf2; --muted: #9aa3b6; --line: #2e3545;
+  --img: #ff7a63; --img-soft: #3a211d; --mus: #a690ff; --mus-soft: #2a2443; --sto: #4cc78f; --sto-soft: #183327;
+  --news: #6aa3ff; --news-soft: #1a2944; --ok: #4cc78f; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.7 var(--body); word-break: keep-all; overflow-wrap: anywhere; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--surface); }
+a { color: inherit; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.25; text-wrap: balance; margin: 0; }
+h2 { font-size: clamp(28px, 4.4vw, 38px); }
+h3 { font-size: 23px; }
+p { margin: 0; }
+.wrap { max-width: 980px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* header */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; gap: 16px; padding-block: 10px; flex-wrap: wrap; }
+.brand { font-family: var(--display); font-size: 21px; white-space: nowrap; }
+.brand small { font-family: var(--body); font-size: 12px; color: var(--muted); margin-left: 6px; }
+.prog { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.prog .bar { width: 110px; height: 8px; border-radius: 99px; background: var(--sunken); overflow: hidden; }
+.prog .bar i { display: block; height: 100%; width: 0; background: var(--ok); transition: width .3s; }
+nav.tabs { display: flex; gap: 6px; overflow-x: auto; padding-block: 0 10px; scrollbar-width: none; }
+nav.tabs::-webkit-scrollbar { display: none; }
+nav.tabs a { flex: 0 0 auto; text-decoration: none; padding: 7px 14px; border-radius: 99px; font-size: 15px; font-weight: 500; color: var(--muted); border: 1px solid var(--line); background: var(--surface); display: flex; gap: 8px; align-items: center; }
+nav.tabs a .n { font-family: var(--mono); font-size: 12px; }
+nav.tabs a .c { font-size: 12px; font-variant-numeric: tabular-nums; opacity: .8; }
+nav.tabs a[aria-current="page"] { color: #fff; background: var(--t, var(--ink)); border-color: var(--t, var(--ink)); }
+:root[data-theme="dark"] nav.tabs a[aria-current="page"] { color: #12151d; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) nav.tabs a[aria-current="page"] { color: #12151d; } }
+nav.tabs a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, .step:focus-within { outline: 3px solid var(--acc); outline-offset: 2px; }
+
+/* views */
+main { padding-block: 28px 120px; }
+section.view { display: grid; gap: 28px; }
+.m-image { --acc: var(--img); --acc-soft: var(--img-soft); }
+.m-music { --acc: var(--mus); --acc-soft: var(--mus-soft); }
+.m-story { --acc: var(--sto); --acc-soft: var(--sto-soft); }
+.m-news  { --acc: var(--news); --acc-soft: var(--news-soft); }
+.eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--acc); text-transform: uppercase; }
+.lead { color: var(--muted); max-width: 62ch; margin-top: 8px; }
+.head { display: grid; gap: 6px; }
+
+.block { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 22px; display: grid; gap: 16px; min-width: 0; }
+.block.tint { background: var(--acc-soft); border-color: transparent; }
+.block > header { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.kind { font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 99px; background: var(--acc-soft); color: var(--acc); white-space: nowrap; }
+.block.tint .kind { background: var(--surface); }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.grid2 > *, .grid3 > * { min-width: 0; }
+figure { margin: 0; display: grid; gap: 6px; }
+figure img { border-radius: 8px; border: 1px solid var(--line); background: #fff; width: 100%; height: auto; }
+figcaption { font-size: 13px; color: var(--muted); }
+.zoom { cursor: zoom-in; }
+
+/* numbered flow */
+ol.flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; counter-reset: f; }
+ol.flow li { counter-increment: f; background: var(--sunken); border-radius: 10px; padding: 12px 14px; display: grid; gap: 2px; align-content: start; }
+ol.flow li::before { content: counter(f); font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--acc); }
+ol.flow b { font-size: 16px; }
+ol.flow span { font-size: 14px; color: var(--muted); line-height: 1.5; }
+.keyline { font-weight: 700; padding: 12px 16px; border-radius: 10px; background: var(--acc-soft); }
+
+/* steps (checklist) */
+.steps { display: grid; gap: 8px; }
+.step { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; transition: background .15s; }
+.step input { appearance: none; width: 24px; height: 24px; margin: 2px 0 0; border: 2px solid var(--line); border-radius: 7px; display: grid; place-items: center; cursor: pointer; background: var(--surface); }
+.step input:checked { background: var(--ok); border-color: var(--ok); }
+.step input:checked::after { content: ""; width: 7px; height: 12px; border: solid #fff; border-width: 0 3px 3px 0; transform: translateY(-2px) rotate(45deg); }
+.step input:focus-visible { outline: none; }
+.step:has(input:checked) { background: var(--sunken); }
+.step:has(input:checked) .st { text-decoration: line-through; text-decoration-color: var(--muted); color: var(--muted); }
+.step .st { font-weight: 500; }
+.step .sd { display: block; font-size: 14px; color: var(--muted); margin-top: 2px; }
+
+/* buttons & links */
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.btn { font: 500 15px/1 var(--body); padding: 11px 16px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+.btn:hover { border-color: var(--acc); }
+.btn.go { background: var(--acc); border-color: var(--acc); color: #fff; }
+:root[data-theme="dark"] .btn.go { color: #12151d; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.go { color: #12151d; } }
+.btn.go::after { content: "↗"; font-size: 14px; }
+.btn.timer::before { content: ""; width: 14px; height: 14px; border-radius: 50%; border: 2px solid currentColor; box-sizing: border-box; background: conic-gradient(currentColor 0 25%, transparent 0); }
+.btn.sm { padding: 7px 11px; font-size: 14px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { font: 14px var(--body); padding: 5px 11px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.chip:hover, .chip[aria-pressed="true"] { border-color: var(--acc); color: var(--acc); background: var(--acc-soft); }
+
+/* prompt / code boxes */
+.prompt { position: relative; background: var(--sunken); border-radius: 10px; padding: 16px 16px 16px; font-size: 15px; white-space: pre-wrap; line-height: 1.75; }
+.prompt.mono { font-family: var(--mono); font-size: 14px; line-height: 1.6; overflow-x: auto; white-space: pre; }
+.copybar { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.copybar .label { font-size: 13px; font-weight: 700; color: var(--muted); }
+.copied { color: var(--ok) !important; border-color: var(--ok) !important; }
+
+/* forms */
+.field { display: grid; gap: 6px; }
+.field label { font-size: 14px; font-weight: 700; }
+.field .hint { font-size: 13px; color: var(--muted); }
+input[type=text], input[type=number], textarea, select { width: 100%; font: 15px/1.6 var(--body); padding: 10px 12px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+textarea { resize: vertical; min-height: 90px; }
+textarea.mono { font-family: var(--mono); font-size: 14px; }
+.inline-in { display: inline-block; width: 7.5em; padding: 4px 8px; }
+
+/* table */
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 14px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { background: var(--sunken); font-weight: 700; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.t { font-family: var(--mono); white-space: nowrap; color: var(--acc); }
+.tag { display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 8px; border-radius: 99px; background: var(--acc-soft); color: var(--acc); white-space: nowrap; }
+
+/* reveal */
+details { border: 1px dashed var(--line); border-radius: 10px; padding: 10px 14px; }
+details summary { cursor: pointer; font-weight: 700; color: var(--acc); }
+details[open] summary { margin-bottom: 8px; }
+
+/* intro cards */
+.mod-card { text-decoration: none; display: grid; gap: 6px; padding: 18px; border-radius: var(--r); background: var(--acc-soft); border: 1px solid transparent; }
+.mod-card:hover { border-color: var(--acc); }
+.mod-card .n { font-family: var(--mono); color: var(--acc); font-size: 13px; }
+.mod-card b { font-family: var(--display); font-weight: 400; font-size: 22px; }
+.mod-card span { font-size: 14px; color: var(--muted); }
+
+/* token demo */
+.tok-sentence { font-size: 22px; font-weight: 700; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-height: 44px; }
+.tok-sentence .w { padding: 2px 10px; border-radius: 8px; background: var(--sunken); }
+.tok-sentence .w.new { background: var(--acc-soft); color: var(--acc); }
+.tok-sentence .q { padding: 2px 12px; border-radius: 8px; border: 2px dashed var(--acc); color: var(--acc); }
+.cands { display: grid; gap: 6px; }
+.cand { display: grid; grid-template-columns: 110px 1fr 64px; gap: 10px; align-items: center; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; font: 15px var(--body); color: var(--ink); text-align: left; }
+.cand:hover { border-color: var(--acc); }
+.cand .b { height: 10px; border-radius: 99px; background: var(--sunken); overflow: hidden; }
+.cand .b i { display: block; height: 100%; background: var(--acc); }
+.cand .p { font-family: var(--mono); font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* diffusion */
+.diff { display: grid; grid-template-columns: minmax(0, 320px) 1fr; gap: 20px; align-items: center; }
+.diff canvas { width: 100%; max-width: 320px; aspect-ratio: 1; border-radius: 10px; border: 1px solid var(--line); background: #888; }
+input[type=range] { width: 100%; accent-color: var(--acc); }
+.stat { font-family: var(--mono); font-size: 14px; font-variant-numeric: tabular-nums; }
+@media (max-width: 640px) { .diff { grid-template-columns: 1fr; } .cand { grid-template-columns: 84px 1fr 56px; } }
+
+/* blob controls */
+.ctl { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.ctl div { background: var(--surface); border-radius: 10px; padding: 12px; display: grid; gap: 2px; }
+.ctl b { color: var(--acc); }
+
+/* news mock */
+.newsmock { aspect-ratio: 16/9; max-width: 100%; border-radius: 10px; overflow: hidden; position: relative; background: linear-gradient(160deg, #0d2a52, #0b5b7a 55%, #1a7f8f); color: #fff; font-family: var(--body); container-type: inline-size; }
+.newsmock .live { position: absolute; top: 5%; left: 4%; display: flex; gap: 2cqw; align-items: center; font-size: 3.2cqw; font-weight: 700; }
+.newsmock .live i { background: #e2343a; padding: .2em .6em; border-radius: 4px; font-style: normal; }
+.newsmock .logo { position: absolute; top: 5%; right: 4%; font-family: var(--display); font-size: 3.6cqw; letter-spacing: .04em; }
+.newsmock .wave { position: absolute; inset: auto 0 22% 0; height: 30%; background: repeating-linear-gradient(90deg, rgba(255,255,255,.08) 0 2px, transparent 2px 6%); }
+.newsmock .low { position: absolute; left: 0; right: 0; bottom: 6%; }
+.newsmock .hl { background: #fff; color: #0d2a52; font-family: var(--display); font-size: 6cqw; padding: .1em 4%; display: flex; gap: .5em; align-items: center; }
+.newsmock .hl i { font-style: normal; background: #e2343a; color: #fff; font-size: .55em; padding: .15em .5em; border-radius: 4px; }
+.newsmock .ticker { background: #0d2a52; font-size: 2.6cqw; padding: .5em 4%; }
+
+/* timer */
+.timerbox { position: fixed; z-index: 40; right: max(16px, calc(env(safe-area-inset-right, 0px) + 16px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); background: var(--ink); color: var(--bg); border-radius: 16px; padding: 12px 14px 12px 18px; display: flex; align-items: center; gap: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+.timerbox .tl { font-size: 13px; opacity: .8; }
+.timerbox .tv { font-family: var(--mono); font-size: 30px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1; }
+.timerbox.done .tv { color: #ffb35c; }
+.timerbox button { font: 500 14px var(--body); background: transparent; color: var(--bg); border: 1px solid currentColor; border-radius: 8px; padding: 6px 10px; cursor: pointer; opacity: .85; }
+
+/* lightbox */
+.lb { position: fixed; inset: 0; z-index: 50; background: rgba(10,12,18,.88); display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); cursor: zoom-out; }
+.lb img { max-width: 100%; max-height: 100%; border-radius: 8px; background: #fff; }
+
+.foot { color: var(--muted); font-size: 13px; padding-top: 8px; }
+.pager { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">AI 창작 따라하기<small>AIEDAP 마스터교원 신규 연수</small></div>
+    <div class="prog" title="체크한 실습 단계 수"><span id="progTxt">0 / 0</span><span class="bar"><i id="progBar"></i></span></div>
+  </div>
+  <div class="wrap">
+    <nav class="tabs" aria-label="연수 단계">
+      <a href="#start" data-v="start"><span>시작</span></a>
+      <a href="#image" data-v="image" style="--t: var(--img)"><span class="n">01</span><span>이미지</span><span class="c"></span></a>
+      <a href="#music" data-v="music" style="--t: var(--mus)"><span class="n">02</span><span>음악</span><span class="c"></span></a>
+      <a href="#story" data-v="story" style="--t: var(--sto)"><span class="n">03</span><span>글쓰기</span><span class="c"></span></a>
+      <a href="#news" data-v="news" style="--t: var(--news)"><span class="n">실습</span><span>30초 미래 뉴스</span><span class="c"></span></a>
+      <a href="#wrap" data-v="wrap"><span>마무리</span></a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ START ============ -->
+<section class="view" id="v-start" data-view="start">
+  <div class="head">
+    <div class="eyebrow">AI와 함께하는 교과 혁신</div>
+    <h2>최신 기술 체험과 적용 실습</h2>
+    <p class="lead">강사 화면을 보면서 이 페이지에서 같은 단계를 따라 해 주세요. 끝낸 단계는 체크하면 위쪽 진행 막대에 반영됩니다. 체크 기록은 지금 쓰는 브라우저에만 남습니다.</p>
+    <p class="small muted">강사 손우재 · 경남권역 명진초</p>
+  </div>
+
+  <div class="block">
+    <header><h3>학습목표</h3></header>
+    <ol class="flow" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr))">
+      <li><b>원리 설명하기</b><span>이미지·음악·글쓰기 생성 AI 각각의 작동 원리를 설명할 수 있다.</span></li>
+      <li><b>체험하고 만들기</b><span>세 가지 AI 창작 도구를 직접 체험하여, 학생의 발달 수준과 교과 특성에 맞게 활용 가능한 산출물을 제작할 수 있다.</span></li>
+    </ol>
+  </div>
+
+  <div class="grid2">
+    <a class="mod-card m-image" href="#image"><span class="n">01</span><b>이미지 생성 AI, 그림으로 표현하기</b><span>Quick, Draw! · AutoDraw · Say What You See</span></a>
+    <a class="mod-card m-music" href="#music"><span class="n">02</span><b>음악 생성 AI, 소리로 표현하기</b><span>Blob Opera · Play a Kandinsky · Gemini 음악 만들기</span></a>
+    <a class="mod-card m-story" href="#story"><span class="n">03</span><b>글쓰기 AI, 이야기로 표현하기</b><span>다음 토큰 예측 · 할루시네이션</span></a>
+    <a class="mod-card m-news" href="#news"><span class="n">실습</span><b>모션 그래픽 영상 제작: 30초 미래 뉴스</b><span>Gemini · AI Studio TTS · Claude</span></a>
+  </div>
+
+  <div class="block">
+    <header><h3>시작 전 준비</h3><span class="kind">체크리스트</span></header>
+    <div class="steps">
+      <label class="step"><input type="checkbox" data-k="pre-1"><span><span class="st">Google 계정으로 로그인한 Chrome 창 열기</span><span class="sd">Gemini와 AI Studio 모두 Google 계정이 필요합니다.</span></span></label>
+      <label class="step"><input type="checkbox" data-k="pre-2"><span><span class="st">번역기 탭 하나 열어 두기</span><span class="sd">Say What You See는 영어만 지원합니다. <a href="https://papago.naver.com/" target="_blank" rel="noopener">Papago</a> 또는 <a href="https://translate.google.com/" target="_blank" rel="noopener">구글 번역</a>을 함께 씁니다.</span></span></label>
+      <label class="step"><input type="checkbox" data-k="pre-3"><span><span class="st">이어폰 또는 스피커 확인</span><span class="sd">Blob Opera, 음악 생성, TTS 실습에서 소리를 들어야 합니다.</span></span></label>
+    </div>
+  </div>
+  <div class="pager"><span></span><a class="btn" href="#image">01 이미지로 가기 →</a></div>
+</section>
+
+<!-- ============ 01 IMAGE ============ -->
+<section class="view m-image" id="v-image" data-view="image" hidden>
+  <div class="head">
+    <div class="eyebrow">01 · 이미지 생성 AI</div>
+    <h2>그림으로 표현하기</h2>
+    <p class="lead">AI가 그림을 어떻게 ‘배우는지’ 먼저 확인하고, 이어서 글로 그림을 ‘만드는’ 과정을 체험합니다.</p>
+  </div>
+
+  <div class="block">
+    <header><h3>AI의 이미지 ‘학습’ 과정</h3><span class="kind">원리</span></header>
+    <div class="grid2">
+      <figure><img class="zoom" src="img/image3.jpg" alt="AI가 고양이를 배우는 과정 5단계 그림" loading="lazy"><figcaption>[그림 1] 고양이 이미지 학습 과정 · 출처: ChatGPT로 직접 생성</figcaption></figure>
+      <div style="display:grid; gap:12px; align-content:start">
+        <ol class="flow" style="grid-template-columns: 1fr">
+          <li><b>예시 모으기</b><span>‘고양이’라는 이름이 붙은 사진을 아주 많이 모아요.</span></li>
+          <li><b>특징 찾기</b><span>뾰족한 귀, 수염, 눈 모양처럼 반복되는 특징을 찾아요.</span></li>
+          <li><b>비교하고 예측하기</b><span>새 사진이 들어오면 배운 특징과 비교해 ‘고양이일 확률’을 계산해요.</span></li>
+          <li><b>틀리면 고치기</b><span>강아지를 고양이라고 하면, 기준을 조금씩 고쳐 다시 배워요.</span></li>
+        </ol>
+        <p class="keyline">학습 = 정답이 붙은 예시에서 공통 특징을 찾고, 틀리면 기준을 고치는 과정</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="block tint">
+    <header><h3>체험 ① Quick, Draw!</h3><span class="kind">개별 5분</span></header>
+    <p>제시된 낱말을 20초 안에 그리면 AI가 무엇인지 맞힙니다. 사람들이 그린 수많은 그림을 정답 이름이 붙은 학습 데이터로 모아, 선의 모양·위치·그리는 순서 같은 공통 특징을 학습했습니다.</p>
+    <div class="grid2">
+      <figure><img class="zoom" src="img/image7.jpg" alt="Quick, Draw! 시작 화면" loading="lazy"><figcaption>[그림 2] Quick, Draw!</figcaption></figure>
+      <figure><img class="zoom" src="img/image8.jpg" alt="Quick, Draw! 결과 화면: 케이크 그림과 다른 사람들의 그림" loading="lazy"><figcaption>[그림 3] 결과 화면 중 일부</figcaption></figure>
+    </div>
+    <div class="steps">
+      <label class="step"><input type="checkbox" data-k="img-qd-1"><span><span class="st">사이트 열고 ‘시작하기’ 누르기</span></span></label>
+      <label class="step"><input type="checkbox" data-k="img-qd-2"><span><span class="st">6개 낱말 그리기</span><span class="sd">AI가 그리는 도중에 무엇이라고 추측하는지 들어 보세요.</span></span></label>
+      <label class="step"><input type="checkbox" data-k="img-qd-3"><span><span class="st">결과 화면에서 AI가 못 맞힌 그림 눌러 보기</span><span class="sd">다른 사람들이 같은 낱말을 어떻게 그렸는지 비교해 봅니다. 이것이 AI의 학습 데이터입니다.</span></span></label>
+    </div>
+    <div class="row">
+      <a class="btn go" href="https://quickdraw.withgoogle.com/" target="_blank" rel="noopener">Quick, Draw! 열기</a>
+      <a class="btn" href="https://www.autodraw.com/" target="_blank" rel="noopener">AutoDraw 열기</a>
+      <button class="btn timer" data-timer="300" data-label="Quick, Draw!">5분 타이머</button>
+    </div>
+    <details>
+      <summary>Quick, Draw!와 AutoDraw는 어떻게 연결되나요?</summary>
+      <ol class="flow">
+        <li><b>낙서 데이터 수집</b><span>전 세계 이용자가 그린 낙서의 스트로크(선 긋는 순서, 방향, 속도)를 모읍니다.</span></li>
+        <li><b>특징 추출·학습</b><span>순환신경망(RNN)과 CNN으로 사물마다 공통적인 형태를 학습합니다.</span></li>
+        <li><b>실시간 예측</b><span>AutoDraw에서 그리기 시작하면 학습된 데이터로 형태를 추론해 후보를 보여 줍니다.</span></li>
+        <li><b>아이콘으로 전환</b><span>가장 비슷한 아티스트의 정돈된 그림을 추천해 완성형 이미지로 바꿉니다.</span></li>
+      </ol>
+      <p class="small muted" style="margin-top:8px">출처: Quick, Draw! &amp; AutoDraw (Google AI Experiments)</p>
+    </details>
+  </div>
+
+  <div class="block">
+    <header><h3>AI의 이미지 ‘생성’ 과정</h3><span class="kind">원리</span></header>
+    <ol class="flow">
+      <li><b>글로 입력</b><span>만들고 싶은 그림을 글로 자세히 입력</span></li>
+      <li><b>숫자로 변환</b><span>문장을 단어별로 살펴 숫자 정보로 바꾸기</span></li>
+      <li><b>잡음에서 출발</b><span>알아볼 수 없는 무작위 점·얼룩</span></li>
+      <li><b>조금씩 지우기</b><span>글의 조건에 맞게 얼룩을 지우며 형태 만들기</span></li>
+      <li><b>반복해 다듬기</b><span>압축된 그림 정보 완성</span></li>
+      <li><b>크고 선명하게</b><span>압축 정보를 큰 이미지로 바꾸기</span></li>
+    </ol>
+    <div class="diff">
+      <canvas id="diffCanvas" width="320" height="320" aria-label="잡음에서 그림이 드러나는 모습"></canvas>
+      <div style="display:grid; gap:12px">
+        <p><b>직접 움직여 보기</b> · 막대를 오른쪽으로 옮기면 잡음이 한 단계씩 지워지며 그림이 드러납니다.</p>
+        <input type="range" id="diffRange" min="0" max="50" value="0" aria-label="잡음 제거 단계">
+        <div class="row"><span class="stat" id="diffStat">단계 0 / 50 · 잡음 100%</span>
+          <button class="btn sm" id="diffPlay">자동 재생</button></div>
+        <p class="small muted">입력한 글: <span style="font-family:var(--mono)">A painting of a dog in a field</span> · 시각화용 단순 예시로, 실제 확산 모델은 압축된 공간에서 잡음을 예측해 지웁니다.</p>
+      </div>
+    </div>
+    <p class="keyline">이미지 AI는 무작위 잡음에서 시작해, 글의 조건에 맞게 잡음을 조금씩 지우며 그림을 만든다.</p>
+    <div class="row">
+      <a class="btn" href="https://poloclub.github.io/diffusion-explainer/" target="_blank" rel="noopener">Diffusion Explainer ↗</a>
+      <a class="btn" href="https://youtu.be/Zg4gxdIWDds" target="_blank" rel="noopener">참고 영상: Stable Diffusion Explained ↗</a>
+    </div>
+    <div class="grid2">
+      <div class="block" style="padding:16px"><span class="kind" style="justify-self:start">분류 · Quick, Draw!</span><p>그림 → <b>‘고양이’라는 이름</b></p><p class="small muted">학습한 특징과 비교해 무엇인지 예측</p></div>
+      <div class="block" style="padding:16px"><span class="kind" style="justify-self:start">생성 · 이미지 생성 AI</span><p>‘들판의 강아지 그림’ → <b>새로운 그림</b></p><p class="small muted">학습한 특징으로 그림을 예측해 만듦</p></div>
+    </div>
+    <p class="small">AI의 결과는 ‘정답’이 아니라, 학습한 데이터로 볼 때 확률이 가장 높은 ‘예측’입니다.</p>
+  </div>
+
+  <div class="block tint">
+    <header><h3>체험 ② Say What You See</h3><span class="kind">개별 5분</span></header>
+    <p>구글 AI가 만든 이미지를 관찰하고, 같은 그림이 나오도록 말로 설명하며 프롬프트 쓰기를 연습하는 사이트입니다. Level 1은 문제 이미지와 내 이미지가 50% 일치하면 통과하고, 레벨이 오를수록 기준이 높아집니다.</p>
+    <div class="grid2">
+      <figure><img class="zoom" src="img/image19.jpg" alt="개와 들판을 그린 그림 문제" loading="lazy" style="max-width:300px"><figcaption>[그림 5] 어떤 프롬프트로 만들어진 이미지일까?</figcaption></figure>
+      <div style="display:grid; gap:10px; align-content:start">
+        <p><b>관찰 포인트</b></p>
+        <div class="ctl">
+          <div><b>대상</b><span class="small">무엇을 그렸나요?</span></div>
+          <div><b>배경</b><span class="small">어디에 있나요?</span></div>
+          <div><b>표현 방식</b><span class="small">어떤 재료·화풍인가요?</span></div>
+        </div>
+        <details>
+          <summary>정답 프롬프트 보기</summary>
+          <p style="font-family:var(--mono)">A painting of a dog in a field</p>
+          <p class="small muted">a painting(그림) · a dog(강아지) · in a field(들판에서). 8개의 낱말로 만들어졌습니다.</p>
+        </details>
+      </div>
+    </div>
+
+    <p><b>활동 순서</b></p>
+    <div class="steps">
+      <label class="step"><input type="checkbox" data-k="img-sw-1"><span><span class="st">제시된 이미지를 자세히 관찰하기</span><span class="sd">대상·배경·표현 방식을 하나씩 살펴봅니다.</span></span></label>
+      <label class="step"><input type="checkbox" data-k="img-sw-2"><span><span class="st">예상한 프롬프트를 한국어로 적고 번역기로 번역하기</span><span class="sd"><a href="https://papago.naver.com/" target="_blank" rel="noopener">Papago</a> 또는 <a href="https://translate.google.com/" target="_blank" rel="noopener">구글 번역</a>을 씁니다.</span></span></label>
+      <label class="step"><input type="checkbox" data-k="img-sw-3"><span><span class="st">번역한 결과를 프롬프트에 입력하기</span></span></label>
+      <label class="step"><input type="checkbox" data-k="img-sw-4"><span><span class="st">생성 결과를 문제 이미지와 비교하며 프롬프트 수정하기</span></span></label>
+      <label class="step"><input type="checkbox" data-k="img-sw-5"><span><span class="st">통과하면 다음 이미지에 도전하기</span></span></label>
+    </div>
+    <div class="grid2">
+      <figure><img class="zoom" src="img/image27.jpg" alt="Say What You See 문제 화면" loading="lazy"><figcaption>[그림 7] 문제 예시</figcaption></figure>
+      <figure><img class="zoom" src="img/image26.jpg" alt="Say What You See 정답 화면" loading="lazy"><figcaption>[그림 8] 정답 화면</figcaption></figure>
+    </div>
+    <div class="row">
+      <a class="btn go" href="https://artsandculture.google.com/experiment/say-what-you-see/jwG3m7wQShZngw" target="_blank" rel="noopener">Say What You See 열기</a>
+      <button class="btn timer" data-timer="300" data-label="Say What You See">5분 타이머</button>
+    </div>
+    <p class="foot">출처: Google Arts and Culture, Say What You See</p>
+  </div>
+  <div class="pager"><a class="btn" href="#start">← 시작</a><a class="btn" href="#music">02 음악으로 →</a></div>
+</section>
+
+<!-- ============ 02 MUSIC ============ -->
+<section class="view m-music" id="v-music" data-view="music" hidden>
+  <div class="head">
+    <div class="eyebrow">02 · 음악 생성 AI</div>
+    <h2>소리로 표현하기</h2>
+    <p class="lead">소리의 특징을 탐구하고, 그림과 소리를 연결한 뒤, 그림과 음악으로 함께 창작하는 초등 수업 흐름을 그대로 체험합니다.</p>
+  </div>
+
+  <div class="block">
+    <header><h3>수업 흐름</h3><span class="kind">한눈에 보기</span></header>
+    <div class="grid3">
+      <figure><img class="zoom" src="img/image10.jpg" alt="Blob Opera 화면" loading="lazy"><figcaption><b>1. 소리의 특징 탐구하기</b> · Blob Opera<br>음높이·음색·화음의 변화를 듣고 비교하기</figcaption></figure>
+      <figure><img class="zoom" src="img/image32.jpg" alt="Play a Kandinsky 화면" loading="lazy"><figcaption><b>2. 그림과 소리 연결하기</b> · Play a Kandinsky<br>작품의 색·형태·감정과 소리의 관계 탐색하기</figcaption></figure>
+      <figure><img class="zoom" src="img/image25.jpg" alt="National Gallery Mixtape 화면" loading="lazy"><figcaption><b>3. 그림과 음악으로 함께 창작하기</b> · National Gallery Mixtape<br>그림을 골라 순서와 소리 크기로 음악 구성하기</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="block">
+    <header><h3>AI의 소리 ‘학습 및 생성’ 과정</h3><span class="kind">원리</span></header>
+    <figure><img class="zoom" src="img/image34.jpg" alt="Blob Opera로 알아보는 AI의 소리 학습 과정 5단계" loading="lazy"><figcaption>[그림 9] Blob Opera로 알아보는 ‘학습 및 생성 과정’ · 출처: ChatGPT로 직접 생성</figcaption></figure>
+    <ol class="flow">
+      <li><b>학습 자료</b><span>성악가 4명의 노래 16시간 (소프라노·메조소프라노·테너·베이스)</span></li>
+      <li><b>소리 생성</b><span>노랫소리 특징을 학습한 모델이 음높이·모음에 맞춰 새 목소리를 만듦</span></li>
+      <li><b>화음 생성</b><span>또 다른 머신러닝 모델이 내 입력에 반응해 어울리는 화음을 실시간으로 만듦</span></li>
+    </ol>
+    <p class="keyline">실제 가수의 녹음이 아니라, AI가 학습하여 새롭게 만든 소리예요.</p>
+    <a class="btn" href="http://drive.google.com/file/d/1f3kvOM69Jr9QWpz90p4yFQmnSLVo_FrA/view" target="_blank" rel="noopener" style="justify-self:start">[영상 1] Blob Opera 공연 보기 ↗</a>
+  </div>
+
+  <div class="block tint">
+    <header><h3>체험 ① Blob Opera</h3><span class="kind">자유 탐색 2분 → 개별 5분</span></header>
+    <p>블롭을 끌어 움직이면 AI가 그 위치에 맞는 목소리를 바로 만들어 냅니다.</p>
+    <div class="ctl">
+      <div><b>위아래로</b><span class="small">음높이</span></div>
+      <div><b>앞뒤로</b><span class="small">모음(음색)</span></div>
+      <div><b>다른 블롭</b><span class="small">화음 듣기</span></div>
+    </div>
+    <div class="row">
+      <a class="btn go" href="https://artsandculture.google.com/experiment/blob-opera/AAHWrq360NcGbw" target="_blank" rel="noopener">Blob Opera 열기</a>
+      <button class="btn timer" data-timer="120" data-label="Blob Opera 자유 탐색">2분 타이머</button>
+      <button class="btn timer" data-timer="300" data-label="Blob Opera 개별 활동">5분 타이머</button>
+    </div>
+    <p><b>Blob Opera로 수업하기</b></p>
+    <div class="grid3">
+      <div class="block" style="padding:14px"><span class="kind" style="justify-self:start">음높이와 가락</span><p class="small">블롭을 위아래로 움직이며 높낮이 변화를 듣고 짧은 가락 표현하기</p></div>
+      <div class="block" style="padding:14px"><span class="kind" style="justify-self:start">음색</span><p class="small">모음을 바꾸어 소리의 색깔 비교하기, 네 성부 목소리의 특징 구별하기</p></div>
+      <div class="block" style="padding:14px"><span class="kind" style="justify-self:start">화음</span><p class="small">성부를 음소거하거나 다시 켜며 한 성부와 여러 성부를 비교하기</p></div>
+    </div>
+    <p><b>활동 순서</b></p>
+    <div class="steps">
+      <label class="step"><input type="checkbox" data-k="mus-bo-1"><span><span class="st">‘학교 종’, ‘애국가’ 등 짧고 익숙한 노래 고르기</span></span></label>
+      <label class="step"><input type="checkbox" data-k="mus-bo-2"><span><span class="st">노래를 흥얼거리며 블롭을 위아래로 움직여 음정 찾기</span></span></label>
+      <label class="step"><input type="checkbox" data-k="mus-bo-3"><span><span class="st">짧은 구간씩 연습하며 박자 맞추기</span></span></label>
+      <label class="step"><input type="checkbox" data-k="mus-bo-4"><span><span class="st">녹음 기능으로 완성한 음악 녹음하기</span></span></label>
+    </div>
+    <figure><img class="zoom" src="img/image31.jpg" alt="Blob Opera 연주 장면" loading="lazy"><figcaption>[그림 10] 연주 장면 · 출처: Google Arts and Culture, Blob Opera</figcaption></figure>
+  </div>
+
+  <div class="block tint">
+    <header><h3>체험 ② Play a Kandinsky</h3><span class="kind">이미지와 소리의 관계</span></header>
+    <div class="grid2">
+      <figure><img class="zoom" src="img/image33.jpg" alt="Play a Kandinsky 작품 화면" loading="lazy"><figcaption>출처: Google Arts and Culture, Play a Kandinsky</figcaption></figure>
+      <div style="display:grid; gap:10px; align-content:start">
+        <p><b>확인할 것</b></p>
+        <ul style="margin:0; padding-left:20px"><li>작품의 색·형태와 연결된 소리</li><li>색·형태에 담긴 감정</li></ul>
+        <p class="keyline small">학생에게 함께 안내해 주세요. 칸딘스키가 실제로 들은 소리가 아니라, 그의 글과 이론을 바탕으로 만든 예술적 해석이에요.</p>
+        <div class="row">
+          <a class="btn go" href="https://artsandculture.google.com/experiment/play-a-kandinsky/sgF5ivv105ukhA" target="_blank" rel="noopener">Play a Kandinsky 열기</a>
+          <a class="btn" href="https://drive.google.com/file/d/1BM-496fq_-zF6YRBDfDc6dv9QsUXojso/view" target="_blank" rel="noopener">[영상 2] 보기 ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <header><h3>적용: 시화에 어울리는 음악 만들기</h3><span class="kind">개별 활동</span></header>
+    <div class="grid2">
+      <div style="display:grid; gap:12px; align-content:start">
+        <div class="steps">
+          <label class="step"><input type="checkbox" data-k="mus-po-1"><span><span class="st">좋아하는 시를 고르거나 짧은 시 쓰기</span></span></label>
+          <label class="step"><input type="checkbox" data-k="mus-po-2"><span><span class="st">시의 분위기와 감정을 색·도형·이미지로 표현해 시화 만들기</span></span></label>
+          <label class="step"><input type="checkbox" data-k="mus-po-3"><span><span class="st">시화에 어울리는 음악 만들기 (Gemini)</span><span class="sd">아래 가이드 참고. 가사 없는 연주곡이 전달에 더 좋았습니다.</span></span></label>
+          <label class="step"><input type="checkbox" data-k="mus-po-4"><span><span class="st">Google Slides에 시화 이미지와 mp3를 넣어 작품 완성하기</span><span class="sd">한 장에 한 작품, 링크 하나로 공유해 친구 작품을 듣고 감상합니다.</span></span></label>
+        </div>
+        <p class="small muted">학생 작품 예시 음원:
+          <a href="http://drive.google.com/file/d/1RlSY-LPYHeL8udQlts19Vfmn0BfSX1PW/view" target="_blank" rel="noopener">음원 1</a> ·
+          <a href="http://drive.google.com/file/d/1DiOVh0LCNo_JxHmJu7sbQdlIHGQPc-Yz/view" target="_blank" rel="noopener">음원 2</a> ·
+          <a href="http://drive.google.com/file/d/1mUatFCJcClDBtqLWtcX_7lDwadMmNNvY/view" target="_blank" rel="noopener">음원 3</a></p>
+      </div>
+      <figure><img class="zoom" src="img/image39.jpg" alt="학생 시화 작품 예시" loading="lazy" style="max-height:440px; object-fit:contain"><figcaption>[그림 11] 작품 예시</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="block tint">
+    <header><h3>Gemini 음악 생성 따라하기</h3><span class="kind">실습</span></header>
+    <figure><img class="zoom" src="img/image37.jpg" alt="Gemini 음악 입력창: 짧게, 연주곡, 장르 옵션" loading="lazy" style="max-width:560px"><figcaption>Gemini 입력창의 음악 도구 · ‘짧게’, ‘연주곡’, ‘장르’ 옵션</figcaption></figure>
+    <div class="grid2" style="align-items:start">
+      <figure><img class="zoom" src="img/music-example.webp" alt="예시 이미지: 눈 내리는 크리스마스 밤, 트리와 눈사람 옆에서 마을을 바라보는 두 아이" loading="lazy" style="max-height:520px; object-fit:contain"><figcaption><b>예시 이미지</b> · 오른쪽 클릭(휴대폰은 길게 누르기) → ‘이미지 저장’ 후 Gemini에 첨부해 보세요.</figcaption></figure>
+      <div class="steps" style="align-content:start">
+        <label class="step"><input type="checkbox" data-k="mus-gm-1"><span><span class="st">Gemini 입력창에서 도구 → ‘음악’ 선택</span></span></label>
+        <label class="step"><input type="checkbox" data-k="mus-gm-2"><span><span class="st">시화(장면) 이미지 첨부하고 감정 설명 쓰기</span><span class="sd">내 시화가 없으면 왼쪽 예시 이미지를 저장해 첨부하세요.</span></span></label>
+        <label class="step"><input type="checkbox" data-k="mus-gm-3"><span><span class="st">옵션 고르기: 길이 ‘짧게’ · ‘연주곡’ · 장르</span></span></label>
+        <label class="step"><input type="checkbox" data-k="mus-gm-4"><span><span class="st">생성 실행 → 결과 들어 보기</span></span></label>
+        <label class="step"><input type="checkbox" data-k="mus-gm-5"><span><span class="st">마음에 드는 트랙을 mp3로 저장</span></span></label>
+      </div>
+    </div>
+    <a class="btn go" href="https://gemini.google.com/" target="_blank" rel="noopener" style="justify-self:start">Gemini 열기</a>
+    <details>
+      <summary>학생 계정 사용과 무료 버전 안내</summary>
+      <ul style="margin:0; padding-left:20px" class="small">
+        <li>현재 Gemini 무료 버전에서 30초 음악을 생성할 수 있습니다. 이후 바뀔 수 있으니 수업 전에 확인해 주세요.</li>
+        <li>학교에서 발급한 Google Workspace for Education 계정이면 초등학생도 사용할 수 있습니다. 구글이 초등학생 활용을 명시하고 있고, 학생의 응답을 AI 재학습에 쓰지 않으며, 답변을 한 번 더 검토해 할루시네이션을 줄입니다.</li>
+        <li>학생이 직접 쓸 수 없다면 학생이 분위기·장르를 말하고 교사가 대신 생성합니다.</li>
+      </ul>
+    </details>
+  </div>
+
+  <div class="block tint">
+    <header><h3>Canva에 음악 넣어 작품 완성하기</h3><span class="kind">실습</span></header>
+    <p>Gemini에서 저장한 mp3를 Canva 실습 페이지에 올려, 그림과 음악이 함께 나오는 작품을 만들어 봅니다.</p>
+    <div class="steps">
+      <label class="step"><input type="checkbox" data-k="mus-cv-1"><span><span class="st">아래 버튼으로 Canva 실습 페이지 열기</span><span class="sd">Canva 계정으로 로그인합니다. 템플릿으로 열리면 ‘새 디자인에 템플릿 사용’을 누르세요.</span></span></label>
+      <label class="step"><input type="checkbox" data-k="mus-cv-2"><span><span class="st">왼쪽 메뉴 ‘업로드’ → ‘파일 업로드’로 Gemini 음악 mp3 올리기</span></span></label>
+      <label class="step"><input type="checkbox" data-k="mus-cv-3"><span><span class="st">업로드한 음악을 눌러 내 페이지에 넣기</span><span class="sd">한 페이지에 그림 한 장과 음악 하나를 넣습니다.</span></span></label>
+      <label class="step"><input type="checkbox" data-k="mus-cv-4"><span><span class="st">재생 버튼으로 그림과 음악이 어울리는지 들어 보기</span></span></label>
+    </div>
+    <a class="btn go" href="https://canva.link/57e2n0fp6w4cvhq" target="_blank" rel="noopener" style="justify-self:start">Canva 실습 페이지 열기</a>
+  </div>
+
+  <div class="block">
+    <header><h3>실제 수업 사례</h3><span class="kind">참고</span></header>
+    <div class="grid2">
+      <div style="display:grid; gap:8px; align-content:start"><b>시화 + 음악 (개별)</b><p class="small muted">‘마법 소녀’ 작품 등 학생 결과물 모음</p><a class="btn" href="https://canva.link/q3jyl0v030apq27" target="_blank" rel="noopener" style="justify-self:start">Canva에서 보기 ↗</a></div>
+      <div style="display:grid; gap:8px; align-content:start"><b>웹툰 + 음악 + 영상 (모둠)</b>
+        <ol class="small" style="margin:0; padding-left:20px"><li>모둠에서 웹툰 스토리 구성하기</li><li>장면의 분위기·감정을 이야기하고 Gemini로 음악 생성하기</li><li>Canva에 올려 ‘이미지로 동영상 생성’ 프롬프트 입력하기</li><li>완성한 음악을 감상하고 그림의 선택·순서·감정과 장면의 관계 설명하기</li></ol>
+        <a class="btn" href="https://canva.link/y1ho6nhk3apyzqh" target="_blank" rel="noopener" style="justify-self:start">Canva에서 보기 ↗</a></div>
+    </div>
+  </div>
+  <div class="pager"><a class="btn" href="#image">← 01 이미지</a><a class="btn" href="#story">03 글쓰기로 →</a></div>
+</section>
+
+<!-- ============ 03 STORY ============ -->
+<section class="view m-story" id="v-story" data-view="story" hidden>
+  <div class="head">
+    <div class="eyebrow">03 · 글쓰기 AI</div>
+    <h2>이야기로 표현하기</h2>
+    <p class="lead">글쓰기 AI는 앞의 말을 보고 다음에 올 말을 확률로 고릅니다. 직접 골라 보며 원리를 확인하고, 이어지는 미래 뉴스 실습에서 활용합니다.</p>
+  </div>
+
+  <div class="block">
+    <header><h3>AI의 글 ‘학습 및 생성’ 과정</h3><span class="kind">원리</span></header>
+    <figure><img class="zoom" src="img/image35.jpg" alt="AI의 글 학습 및 생성 과정 5단계" loading="lazy"><figcaption>‘학습 및 생성 과정’ · 출처: ChatGPT로 직접 생성</figcaption></figure>
+    <ol class="flow">
+      <li><b>여러 글 모으기</b><span>책·기사·대화 등 다양한 글</span></li>
+      <li><b>토큰으로 나누기</b><span>단어나 단어 조각을 숫자로 표현</span></li>
+      <li><b>관계 학습하기</b><span>어떤 말 뒤에 어떤 말이 자주 오는지 찾기</span></li>
+      <li><b>다음 토큰 예측</b><span>앞의 내용을 바탕으로 가능성 계산</span></li>
+      <li><b>예측 반복</b><span>한 조각씩 이어 문장과 문단 완성</span></li>
+    </ol>
+  </div>
+
+  <div class="block tint">
+    <header><h3>다음에 올 말, 직접 골라 보기</h3><span class="kind">체험</span></header>
+    <div class="tok-sentence" id="tokSent" aria-live="polite"></div>
+    <p class="small muted">앞의 말을 보고, 다음 토큰의 확률을 계산합니다. 후보를 직접 누르거나 아래 버튼을 쓰세요. ※ 원리 설명을 위한 예시 값</p>
+    <div class="cands" id="tokCands"></div>
+    <div class="row">
+      <button class="btn" id="tokTop">가장 높은 확률로 고르기</button>
+      <button class="btn" id="tokRand">확률대로 뽑기</button>
+      <button class="btn" id="tokReset">처음부터</button>
+    </div>
+    <p class="keyline">예측을 반복하면 문장이 됩니다. 그럴듯하지만 사실과 다른 답 = <b>할루시네이션</b></p>
+    <p class="small">AI는 그럴듯한 말을 예측할 뿐, 내용이 사실인지는 스스로 확인하지 않아요. ‘바나나’, ‘달나라에서’처럼 확률이 낮은 말을 골라 보면 어색한 문장이 어떻게 생기는지 볼 수 있습니다.</p>
+  </div>
+  <div class="pager"><a class="btn" href="#music">← 02 음악</a><a class="btn" href="#news">실습: 30초 미래 뉴스로 →</a></div>
+</section>
+
+<!-- ============ NEWS ============ -->
+<section class="view m-news" id="v-news" data-view="news" hidden>
+  <div class="head">
+    <div class="eyebrow">실습 · 모션 그래픽 영상 제작</div>
+    <h2>30초 미래 뉴스, 이렇게 만들어요</h2>
+    <p class="lead">글(대본) → 소리(내레이션) → 그림(모션 그래픽)을 차례로 만들고, 마지막에 하나의 영상으로 합칩니다. 실습 시간은 약 40분입니다.</p>
+  </div>
+
+  <div class="block">
+    <div class="grid2" style="align-items:center">
+      <div class="newsmock" role="img" aria-label="완성 화면 예시: LIVE 2056.11.18 부산, 부산 바다에 잠기다">
+        <div class="live"><i>LIVE</i><span>2056.11.18 부산</span></div>
+        <div class="logo">FUTURE NEWS</div>
+        <div class="wave"></div>
+        <div class="low"><div class="hl"><i>속보</i><span id="mockHl">부산, 바다에 잠기다</span></div><div class="ticker" id="mockTk">해운대·광안리 일대 침수 | 이 영상은 가상의 미래 뉴스입니다</div></div>
+      </div>
+      <ol class="flow" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr))">
+        <li><b>대본·자막</b><span>Gemini · 30초 대사와 SRT</span></li>
+        <li><b>내레이션</b><span>AI Studio TTS · 앵커 목소리</span></li>
+        <li><b>모션 그래픽</b><span>Claude · 그래프·자막바</span></li>
+        <li><b>배경음악</b><span>음악 만들기 · 연주곡</span></li>
+        <li><b>편집·완성</b><span>Clipchamp 등</span></li>
+      </ol>
+    </div>
+    <div class="row"><button class="btn timer" data-timer="2400" data-label="미래 뉴스 실습">40분 타이머</button>
+      <a class="btn go" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini 열기</a>
+      <a class="btn go" href="https://aistudio.google.com/" target="_blank" rel="noopener">AI Studio 열기</a></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="block tint">
+    <header><span class="kind">1단계</span><h3>대본·자막 만들기</h3></header>
+    <p>아래 예시 프롬프트를 참고해 내 수업에 맞는 프롬프트를 직접 써 보세요. 예시에는 <b>수업 맥락 · 상황 설정 · 용도 · 산출물과 분량</b> 네 가지가 모두 들어 있습니다.</p>
+    <div class="copybar"><span class="label">예시 프롬프트 (강사 작성)</span></div>
+    <div class="prompt">지속가능한 발전이라는 주제로 수업을 할거야. 30년뒤 미래에서 온 뉴스로 지구 온난화로 인해 부산이 물에 잠기고 있다는 뉴스를 동기유발로 하려고 해. 이 뉴스 영상 제작을 위한 대사와 srt를 30초 내외로 작성해줘.</div>
+    <div class="grid3" style="grid-template-columns: repeat(auto-fit, minmax(170px, 1fr))">
+      <div class="block" style="padding:14px"><span class="kind" style="justify-self:start">수업 맥락</span><p class="small">지속가능한 발전 주제 수업</p></div>
+      <div class="block" style="padding:14px"><span class="kind" style="justify-self:start">상황 설정</span><p class="small">30년 뒤 미래에서 온 뉴스, 부산이 물에 잠기는 중</p></div>
+      <div class="block" style="padding:14px"><span class="kind" style="justify-self:start">용도</span><p class="small">수업 동기유발</p></div>
+      <div class="block" style="padding:14px"><span class="kind" style="justify-self:start">산출물·분량</span><p class="small">대사와 srt, 30초 내외</p></div>
+    </div>
+    <p class="small"><b>바꿔 쓰기 Tip</b> · ‘부산’을 우리 지역으로, ‘30년 뒤’를 원하는 연도로 바꾸면 학교별 맞춤 뉴스가 됩니다. 수업 주제와 상황도 내 수업에 맞게 바꿔 보세요.</p>
+    <div class="field">
+      <label for="nw-mine">내 프롬프트 쓰기</label>
+      <textarea id="nw-mine" rows="4" placeholder="예: 기후 위기라는 주제로 수업을 할거야. 20년 뒤 미래에서 온 뉴스로 … 대사와 srt를 30초 내외로 작성해줘."></textarea>
+      <span class="hint">네 가지 요소가 모두 들어갔는지 확인한 뒤 복사해서 Gemini에 붙여넣으세요.</span>
+    </div>
+    <div class="row"><button class="btn sm" data-copy="#nw-mine">내 프롬프트 복사</button><a class="btn go" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini 열기</a></div>
+    <div class="steps">
+      <label class="step"><input type="checkbox" data-k="nw-1-0"><span><span class="st">예시를 참고해 네 가지 요소가 담긴 내 프롬프트 쓰기</span></span></label>
+      <label class="step"><input type="checkbox" data-k="nw-1-1"><span><span class="st">Gemini에 내 프롬프트 붙여넣고 대사·SRT 받기</span></span></label>
+      <label class="step"><input type="checkbox" data-k="nw-1-2"><span><span class="st">아래 다듬기 체크리스트로 대사 고치기</span></span></label>
+      <label class="step"><input type="checkbox" data-k="nw-1-3"><span><span class="st">SRT를 메모장에 붙여넣고 news.srt (UTF-8)로 저장</span></span></label>
+    </div>
+  </div>
+
+  <div class="block">
+    <header><h3>대사 다듬기와 SRT 확인</h3></header>
+    <div class="grid2">
+      <div><p><b>다듬기 체크리스트</b></p>
+        <div class="steps">
+          <label class="step"><input type="checkbox" data-k="nw-ck-1"><span><span class="st">소리 내어 읽어 30초 안에 들어오나요?</span></span></label>
+          <label class="step"><input type="checkbox" data-k="nw-ck-2"><span><span class="st">한 문장이 자막 한 줄 길이인가요?</span></span></label>
+          <label class="step"><input type="checkbox" data-k="nw-ck-3"><span><span class="st">수치·사실을 과장하지 않았나요?</span></span></label>
+          <label class="step"><input type="checkbox" data-k="nw-ck-4"><span><span class="st">희망과 행동으로 끝맺나요?</span></span></label>
+        </div></div>
+      <div><p><b>SRT 파일 구조</b></p>
+        <ol class="flow" style="grid-template-columns:1fr">
+          <li><b>순번</b><span>1, 2, 3 … 자막의 순서</span></li>
+          <li><b>시간</b><span>시:분:초,밀리초 --&gt; 끝나는 시간</span></li>
+          <li><b>자막</b><span>화면에 보일 문장 (1~2줄)</span></li>
+          <li><b>빈 줄</b><span>다음 자막과 구분</span></li>
+        </ol></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <header><h3>짚고 가기: 가상 뉴스를 만들 때</h3><span class="kind">원칙</span></header>
+    <div class="grid3">
+      <div class="block tint" style="padding:16px"><b>가상임을 밝히기</b><p class="small">영상 시작이나 화면 구석에 ‘가상의 미래 뉴스’ 문구를 넣어 실제 뉴스와 구분해요.</p></div>
+      <div class="block tint" style="padding:16px"><b>근거 확인하기</b><p class="small">해수면 상승·기온 수치는 IPCC·기상청 자료로 확인하고 과장하지 않아요.</p></div>
+      <div class="block tint" style="padding:16px"><b>희망으로 끝맺기</b><p class="small">두려움만 남기지 않도록 ‘지금 할 수 있는 행동’으로 마무리해요.</p></div>
+    </div>
+    <p class="keyline">AI가 쓴 대본은 ‘초안’입니다. 교사가 사실과 표현을 검토한 뒤 수업에 사용해요.</p>
+    <p class="foot">출처: IPCC 제6차 평가보고서, 기상청 기후정보포털</p>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="block tint">
+    <header><span class="kind">2단계</span><h3>AI Studio로 내레이션 만들기</h3></header>
+    <figure style="max-width:560px"><img class="zoom" src="img/image49.jpg" alt="Gemini TTS 모델 카드" loading="lazy"><figcaption>[그림 3] TTS 모델 카드 · 모델 ID gemini-3.8-flash-tts (텍스트 입력 → 오디오 출력)</figcaption></figure>
+    <p>스타일은 목소리의 ‘연출 대본’입니다. <b>누가(오디오 프로필) · 어디서(장면) · 어떻게(연출 노트) · 무엇을(대본)</b> 말하는지 네 칸으로 나누어 쓰면 원하는 목소리에 가까워집니다. Gemini에게 먼저 초안을 받아도 됩니다.</p>
+    <div class="copybar"><span class="label">스타일 초안 요청 프롬프트 (Gemini)</span><button class="btn sm" data-copy="#tts-ask">복사</button></div>
+    <div class="prompt" id="tts-ask">구글 ai studio의 tts 서비스를 활용하여 음성을 만들거야. 내레이션에 알맞는 style을 작성해줘.</div>
+    <div class="grid3">
+      <div class="block" style="padding:14px"><span class="kind" style="justify-self:start">Charon</span><p class="small">정보 전달형, 차분한 뉴스 톤</p></div>
+      <div class="block" style="padding:14px"><span class="kind" style="justify-self:start">Kore</span><p class="small">단호하고 또렷한 톤</p></div>
+      <div class="block" style="padding:14px"><span class="kind" style="justify-self:start">Puck</span><p class="small">밝은 톤, 비교 감상용</p></div>
+    </div>
+    <p class="small"><b>수업 Tip</b> · 같은 대본을 목소리 2~3개로 들려주고 어울리는 목소리를 고르게 해요.</p>
+    <div class="steps">
+      <label class="step"><input type="checkbox" data-k="nw-2-1"><span><span class="st">aistudio.google.com 접속, Google 계정으로 로그인</span></span></label>
+      <label class="step"><input type="checkbox" data-k="nw-2-2"><span><span class="st">음성 생성 화면에서 모델 선택</span><span class="sd">gemini-3.8-flash-tts</span></span></label>
+      <label class="step"><input type="checkbox" data-k="nw-2-3"><span><span class="st">Style instructions 칸에 Gemini에게 받은 스타일 붙여넣기</span></span></label>
+      <label class="step"><input type="checkbox" data-k="nw-2-4"><span><span class="st">Voice 고르고(예: Charon) 30초 대사 붙여넣기</span></span></label>
+      <label class="step"><input type="checkbox" data-k="nw-2-5"><span><span class="st">Run으로 생성 → 듣고 스타일 고치기 → 오디오 다운로드</span></span></label>
+    </div>
+    <div class="row"><a class="btn go" href="https://aistudio.google.com/" target="_blank" rel="noopener">AI Studio 열기</a></div>
+    <details>
+      <summary>이럴 땐 이렇게</summary>
+      <div class="grid3">
+        <div><b>30초를 넘어요</b><p class="small">대사를 한 문장 줄이거나, 연출 노트에 ‘조금 더 빠르게’ 추가</p></div>
+        <div><b>숫자 발음이 어색해요</b><p class="small">2056년 → ‘이천오십육 년’처럼 한글로 풀어 쓰기</p></div>
+        <div><b>너무 밋밋해요</b><p class="small">강조할 낱말과 쉼 위치를 연출 노트에 적기</p></div>
+      </div>
+      <p class="small muted" style="margin-top:8px">메뉴 이름과 요금 정책은 업데이트에 따라 바뀔 수 있습니다.</p>
+    </details>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="block tint">
+    <header><span class="kind">3단계</span><h3>Claude로 모션 그래픽 만들기</h3></header>
+    <p>Claude는 HTML 코드로 움직이는 화면을 만들고, 대화창 옆 미리보기에서 바로 재생해 볼 수 있습니다. 내레이션 음성 파일, SRT 자막 파일, 배경음악 MP3를 첨부하고 아래 프롬프트를 붙여넣으세요. <b>[ 주제 ]</b>는 내 뉴스 주제로 바꿉니다.</p>
+    <div class="copybar"><span class="label">Claude 프롬프트</span><button class="btn sm" data-copy="#cv-out">복사</button></div>
+    <div class="prompt" id="cv-out" style="max-height:360px; overflow:auto">첨부한 음성 파일과 자막 파일은 내레이션 파일입니다.
+이 내레이션을 기반으로 모션그래픽 애니메이션 html 파일을 만들어주세요.
+
+* 내용: [ 주제 ]
+  - SRT 내용을 보고 장면을 4~6개로 나눠 구성
+  - SRT 각 자막의 시작 시각에 맞춰 장면·요소가 바뀌게 구성
+  - 자막을 화면 하단에 표시
+
+* 길이·화면 : 내레이션 길이 + 1초 / 16:9
+
+* 소리 및 배경음악 : 첨부한 음성파일과 배경음악 MP3를 활용합니다.
+  - 내레이션 음량 1.0, 배경음악 0.15 정도로 계속 깔고, 마지막 1초 동안 배경음악 소리를 줄여 끝냄
+
+* 스타일 : 스타일은 너에게 위임하겠습니다. 최고의 퀄리티를 보여줄 수 있는 스타일로 생성하세요.
+
+* 규칙:
+  * GSAP는 cdnjs에서 불러오고, 모든 움직임은 타임라인 하나로
+  * 소리와 그림이 어긋나지 않게: 타임라인은 멈춰 두고 매 프레임
+    tl.time(내레이션 오디오.currentTime)으로 오디오에 맞추기,
+    gsap.ticker.lagSmoothing(0), 진행 막대를 끌면 오디오도 같은 위치로 이동
+  * 첫 재생은 반드시 단추 클릭으로 시작 (브라우저 자동재생 제한)
+  * 한글 글꼴: 구글 폰트 Black Han Sans(제목) · Noto Sans KR(본문)
+    — document.fonts.ready 이후 시작, 못 불러오면 굵은 기본 글꼴로
+  * 코드는 400줄 안으로 간결하게</div>
+    <div class="steps">
+      <label class="step"><input type="checkbox" data-k="nw-4-1"><span><span class="st">claude.ai 접속해 새 대화 열기</span></span></label>
+      <label class="step"><input type="checkbox" data-k="nw-4-2"><span><span class="st">음성·SRT·배경음악 파일을 첨부하고 위 프롬프트 붙여넣기</span><span class="sd">[ 주제 ]를 내 뉴스 주제로 바꿔 주세요.</span></span></label>
+      <label class="step"><input type="checkbox" data-k="nw-4-3"><span><span class="st">미리보기에서 재생 확인</span></span></label>
+      <label class="step"><input type="checkbox" data-k="nw-4-4"><span><span class="st">대화로 고치기</span><span class="sd">예: “그래프를 더 크게 해 줘”</span></span></label>
+    </div>
+    <a class="btn go" href="https://claude.ai/new" target="_blank" rel="noopener" style="justify-self:start">Claude 열기</a>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="block tint">
+    <header><span class="kind">4단계</span><h3>하나로 합치기: 편집과 완성</h3></header>
+    <div class="grid3">
+      <div class="block" style="padding:16px"><b>1. 불러오기 · 재료 3가지</b><ul class="small" style="margin:0; padding-left:18px"><li>SRT 자막 파일</li><li>내레이션 음성(TTS)</li><li>배경음악</li></ul></div>
+      <div class="block" style="padding:16px"><b>2. 맞추기 · 음성 기준</b><ul class="small" style="margin:0; padding-left:18px"><li>내레이션 길이에 장면 맞추기</li><li>배경음악은 작게</li><li>시작·끝에 페이드</li></ul></div>
+      <div class="block" style="padding:16px"><b>3. 내보내기 · mp4 완성</b><ul class="small" style="margin:0; padding-left:18px"><li>자막 확인 (SRT 불러오기)</li><li>‘가상 뉴스’ 표기 확인</li><li>1080p mp4로 저장</li></ul></div>
+    </div>
+    <p class="small muted">Claude로 만든 화면에 자막을 이미 넣었다면 자막 단계는 생략해도 됩니다. 편집 도구 예: Clipchamp(Windows 기본 앱), Canva, CapCut</p>
+  </div>
+
+  <div class="pager"><a class="btn" href="#story">← 03 글쓰기</a><a class="btn" href="#wrap">마무리 →</a></div>
+</section>
+
+<!-- ============ WRAP ============ -->
+<section class="view" id="v-wrap" data-view="wrap" hidden>
+  <div class="head">
+    <div class="eyebrow">마무리</div>
+    <h2>오늘 체험한 세 가지 AI</h2>
+    <p class="lead">세 AI 모두 많은 데이터에서 특징을 학습하고, 그 특징으로 가장 그럴듯한 결과를 예측해 만듭니다. 그래서 결과는 ‘정답’이 아니라 ‘예측’이고, 교사의 검토가 필요합니다.</p>
+  </div>
+  <div class="grid3">
+    <a class="mod-card m-image" href="#image"><span class="n">01 이미지</span><b>잡음 → 그림</b><span>글의 조건에 맞게 잡음을 조금씩 지우며 그림을 만든다</span></a>
+    <a class="mod-card m-music" href="#music"><span class="n">02 음악</span><b>노래 → 새 목소리</b><span>성악가의 노래에서 특징을 배워 새 소리와 화음을 만든다</span></a>
+    <a class="mod-card m-story" href="#story"><span class="n">03 글</span><b>앞의 말 → 다음 말</b><span>다음 토큰을 확률로 예측하고 반복해 문장을 만든다</span></a>
+  </div>
+  <div class="block">
+    <header><h3>나의 진행 상황</h3></header>
+    <div id="sumList" class="grid3"></div>
+    <div class="row"><button class="btn" id="resetAll">체크 기록 모두 지우기</button><span class="small muted" id="resetMsg"></span></div>
+  </div>
+  <div class="block">
+    <header><h3>사이트 모음</h3></header>
+    <div class="row">
+      <a class="btn" href="https://quickdraw.withgoogle.com/" target="_blank" rel="noopener">Quick, Draw! ↗</a>
+      <a class="btn" href="https://www.autodraw.com/" target="_blank" rel="noopener">AutoDraw ↗</a>
+      <a class="btn" href="https://artsandculture.google.com/experiment/say-what-you-see/jwG3m7wQShZngw" target="_blank" rel="noopener">Say What You See ↗</a>
+      <a class="btn" href="https://artsandculture.google.com/experiment/blob-opera/AAHWrq360NcGbw" target="_blank" rel="noopener">Blob Opera ↗</a>
+      <a class="btn" href="https://artsandculture.google.com/experiment/play-a-kandinsky/sgF5ivv105ukhA" target="_blank" rel="noopener">Play a Kandinsky ↗</a>
+      <a class="btn" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini ↗</a>
+      <a class="btn" href="https://aistudio.google.com/" target="_blank" rel="noopener">Google AI Studio ↗</a>
+      <a class="btn" href="https://papago.naver.com/" target="_blank" rel="noopener">Papago ↗</a>
+    </div>
+  </div>
+  <p class="foot">AIEDAP(AI Education Alliance &amp; Policy lab) 마스터교원 신규 연수 · 영역1 모듈2 · 강사 손우재. 감사합니다.</p>
+</section>
+</main>
+
+<div class="timerbox" id="timerBox" hidden role="timer" aria-live="off">
+  <div><div class="tl" id="timerLabel">활동</div><div class="tv" id="timerVal">05:00</div></div>
+  <button id="timerPause">일시정지</button><button id="timerClose">닫기</button>
+</div>
+<div class="lb" id="lb" hidden><img id="lbImg" alt=""></div>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+  };
+
+  /* ---------- routing ---------- */
+  const views = ['start', 'image', 'music', 'story', 'news', 'wrap'];
+  function show() {
+    const v = views.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'start';
+    $$('section.view').forEach(s => s.hidden = s.dataset.view !== v);
+    $$('nav.tabs a').forEach(a => { if (a.dataset.v === v) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+    const cur = $(`nav.tabs a[data-v="${v}"]`); cur && cur.scrollIntoView({ block: 'nearest', inline: 'center' });
+    window.scrollTo(0, 0);
+    if (v === 'wrap') renderSummary();
+  }
+  addEventListener('hashchange', show);
+
+  /* ---------- checklist progress ---------- */
+  const checked = store.get('aiedap-checks', {});
+  const boxes = $$('input[type=checkbox][data-k]');
+  boxes.forEach(b => { b.checked = !!checked[b.dataset.k]; b.addEventListener('change', () => { checked[b.dataset.k] = b.checked; store.set('aiedap-checks', checked); progress(); }); });
+  const names = { start: '시작 준비', image: '01 이미지', music: '02 음악', story: '03 글쓰기', news: '30초 미래 뉴스' };
+  function counts(view) { const bs = $$(`section[data-view="${view}"] input[type=checkbox][data-k]`); return [bs.filter(b => b.checked).length, bs.length]; }
+  function progress() {
+    const done = boxes.filter(b => b.checked).length;
+    $('#progTxt').textContent = `${done} / ${boxes.length}`;
+    $('#progBar').style.width = (boxes.length ? done / boxes.length * 100 : 0) + '%';
+    $$('nav.tabs a').forEach(a => { const c = $('.c', a); if (!c) return; const [d, t] = counts(a.dataset.v); c.textContent = t ? `${d}/${t}` : ''; });
+  }
+  function renderSummary() {
+    $('#sumList').innerHTML = Object.entries(names).map(([v, n]) => { const [d, t] = counts(v); return `<div class="block" style="padding:14px"><b>${n}</b><span class="stat">${d} / ${t} 단계</span></div>`; }).join('');
+  }
+  let resetArmed = false;
+  $('#resetAll').addEventListener('click', () => {
+    if (!resetArmed) { resetArmed = true; $('#resetAll').textContent = '한 번 더 누르면 지워집니다'; setTimeout(() => { resetArmed = false; $('#resetAll').textContent = '체크 기록 모두 지우기'; }, 4000); return; }
+    boxes.forEach(b => { b.checked = false; delete checked[b.dataset.k]; }); store.set('aiedap-checks', checked); progress(); renderSummary();
+    resetArmed = false; $('#resetAll').textContent = '체크 기록 모두 지우기'; $('#resetMsg').textContent = '모든 체크를 지웠습니다.';
+  });
+
+  /* ---------- copy ---------- */
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-copy]'); if (!b) return;
+    const el = $(b.dataset.copy); const isField = el.tagName === 'TEXTAREA' || el.tagName === 'INPUT';
+    const text = isField ? el.value : (el.dataset.text || el.textContent);
+    const ok = () => { const o = b.textContent; b.textContent = '복사됨'; b.classList.add('copied'); setTimeout(() => { b.textContent = o; b.classList.remove('copied'); }, 1500); };
+    const fallback = () => { if (el.hidden) return; if (isField) { el.select(); b.textContent = 'Ctrl+C로 복사'; return; } const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Ctrl+C로 복사'; };
+    try { navigator.clipboard.writeText(text).then(ok, fallback); } catch { fallback(); }
+  });
+
+  /* ---------- chips fill inputs ---------- */
+  $$('.chips[data-for]').forEach(c => c.addEventListener('click', e => {
+    const ch = e.target.closest('.chip'); if (!ch) return; e.preventDefault();
+    const inp = $('#' + c.dataset.for); inp.value = ch.textContent; inp.dispatchEvent(new Event('input', { bubbles: true }));
+  }));
+
+  /* ---------- persist form fields ---------- */
+  const forms = store.get('aiedap-fields', {});
+  $$('input[type=text], input[type=number], textarea, select').forEach(el => {
+    if (el.id && forms[el.id] !== undefined) el.value = forms[el.id];
+    el.addEventListener('input', () => { forms[el.id] = el.value; store.set('aiedap-fields', forms); });
+  });
+
+  /* ---------- say what you see ---------- */
+  const josa = (w, a, b) => { const c = w.trim().replace(/\(.*\)$/, '').slice(-1).charCodeAt(0); if (c < 0xac00 || c > 0xd7a3) return w + a; return w + (((c - 0xac00) % 28) ? a : b); };
+
+
+  /* ---------- diffusion demo ---------- */
+  const cv = $('#diffCanvas'), cx = cv.getContext('2d', { willReadFrequently: true });
+  const W = 320; let base = null; const noise = new Float32Array(W * W * 3);
+  for (let i = 0; i < noise.length; i++) noise[i] = Math.random() * 255;
+  const im = new Image(); im.src = 'img/image19.jpg';
+  im.onload = () => {
+    const s = Math.min(im.width, im.height); cx.drawImage(im, (im.width - s) / 2, 0, s, s, 0, 0, W, W);
+    try { base = cx.getImageData(0, 0, W, W); } catch { base = null; } drawDiff();
+  };
+  im.onerror = () => drawDiff();
+  function drawDiff() {
+    const st = +$('#diffRange').value, n = 1 - st / 50; const out = cx.createImageData(W, W);
+    for (let p = 0, q = 0; p < out.data.length; p += 4, q += 3) {
+      const r = base ? base.data[p] : 200, g = base ? base.data[p + 1] : 200, b = base ? base.data[p + 2] : 200;
+      out.data[p] = r * (1 - n) + noise[q] * n; out.data[p + 1] = g * (1 - n) + noise[q + 1] * n; out.data[p + 2] = b * (1 - n) + noise[q + 2] * n; out.data[p + 3] = 255;
+    }
+    cx.putImageData(out, 0, 0);
+    $('#diffStat').textContent = `단계 ${st} / 50 · 잡음 ${Math.round(n * 100)}%`;
+  }
+  $('#diffRange').addEventListener('input', drawDiff);
+  let diffT = null;
+  $('#diffPlay').addEventListener('click', () => {
+    if (diffT) { clearInterval(diffT); diffT = null; $('#diffPlay').textContent = '자동 재생'; return; }
+    const r = $('#diffRange'); if (+r.value >= 50) r.value = 0;
+    $('#diffPlay').textContent = '멈춤';
+    diffT = setInterval(() => { r.value = +r.value + 1; drawDiff(); if (+r.value >= 50) { clearInterval(diffT); diffT = null; $('#diffPlay').textContent = '다시 재생'; } }, 90);
+  });
+
+  /* ---------- next token demo ---------- */
+  const levels = [
+    [['좋다', 46], ['덥다', 27], ['맑다', 15], ['춥다', 9], ['바나나', 0.1]],
+    [['그래서', 55], ['하지만', 30], ['오늘은', 15]],
+    [['친구들과', 50], ['우리 반은', 35], ['강아지가', 13], ['공룡이', 2]],
+    [['운동장에서', 48], ['교실에서', 40], ['달나라에서', 2]],
+    [['놀았다.', 60], ['책을 읽었다.', 30], ['춤을 췄다.', 10]]
+  ];
+  let picked = [];
+  function renderTok() {
+    const lv = levels[picked.length];
+    $('#tokSent').innerHTML = ['오늘', '날씨가', '정말'].map(w => `<span class="w">${w}</span>`).join('') +
+      picked.map((w, i) => `<span class="w${i === picked.length - 1 ? ' new' : ''}">${w}</span>`).join('') + (lv ? '<span class="q">?</span>' : '');
+    $('#tokCands').innerHTML = lv ? lv.map(([w, p]) => `<button class="cand" data-w="${w}"><span>${w}</span><span class="b"><i style="width:${Math.max(p, 0.6)}%"></i></span><span class="p">${p}%</span></button>`).join('')
+      : '<p class="small">문장이 완성되었습니다. ‘처음부터’를 눌러 다른 후보를 골라 보세요.</p>';
+    $('#tokTop').disabled = $('#tokRand').disabled = !lv;
+  }
+  $('#tokCands').addEventListener('click', e => { const c = e.target.closest('.cand'); if (c) { picked.push(c.dataset.w); renderTok(); } });
+  $('#tokTop').addEventListener('click', () => { const lv = levels[picked.length]; if (lv) { picked.push(lv.reduce((a, b) => b[1] > a[1] ? b : a)[0]); renderTok(); } });
+  $('#tokRand').addEventListener('click', () => { const lv = levels[picked.length]; if (!lv) return; let r = Math.random() * lv.reduce((s, x) => s + x[1], 0); let w = lv[0][0]; for (const [cw, p] of lv) { r -= p; if (r <= 0) { w = cw; break; } } picked.push(w); renderTok(); });
+  $('#tokReset').addEventListener('click', () => { picked = []; renderTok(); });
+  renderTok();
+
+
+  /* ---------- timer ---------- */
+  let tEnd = 0, tLeft = 0, tInt = null, paused = false;
+  const fmt = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+  function beep() { try { const a = new (window.AudioContext || window.webkitAudioContext)(); [0, .35, .7].forEach(d => { const o = a.createOscillator(), g = a.createGain(); o.frequency.value = 880; o.connect(g); g.connect(a.destination); g.gain.setValueAtTime(.2, a.currentTime + d); g.gain.exponentialRampToValueAtTime(.001, a.currentTime + d + .3); o.start(a.currentTime + d); o.stop(a.currentTime + d + .3); }); } catch {} }
+  function tick() {
+    const s = Math.max(0, Math.ceil((tEnd - Date.now()) / 1000)); $('#timerVal').textContent = fmt(s);
+    if (s === 0) { clearInterval(tInt); tInt = null; $('#timerBox').classList.add('done'); $('#timerLabel').textContent += ' · 끝'; $('#timerPause').hidden = true; beep(); }
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-timer]'); if (!b) return;
+    clearInterval(tInt); paused = false; tEnd = Date.now() + (+b.dataset.timer) * 1000;
+    $('#timerLabel').textContent = b.dataset.label; $('#timerBox').hidden = false; $('#timerBox').classList.remove('done');
+    $('#timerPause').hidden = false; $('#timerPause').textContent = '일시정지'; tick(); tInt = setInterval(tick, 250);
+  });
+  $('#timerPause').addEventListener('click', () => {
+    if (!paused) { tLeft = tEnd - Date.now(); clearInterval(tInt); paused = true; $('#timerPause').textContent = '계속'; }
+    else { tEnd = Date.now() + tLeft; paused = false; tInt = setInterval(tick, 250); $('#timerPause').textContent = '일시정지'; }
+  });
+  $('#timerClose').addEventListener('click', () => { clearInterval(tInt); tInt = null; $('#timerBox').hidden = true; });
+
+  /* ---------- lightbox ---------- */
+  document.addEventListener('click', e => {
+    const z = e.target.closest('img.zoom'); if (z) { $('#lbImg').src = z.src; $('#lbImg').alt = z.alt; $('#lb').hidden = false; return; }
+    if (e.target.closest('#lb')) $('#lb').hidden = true;
+  });
+  addEventListener('keydown', e => { if (e.key === 'Escape') $('#lb').hidden = true; });
+
+  progress(); show();
+})();
+</script>
+</body>
+</html>
