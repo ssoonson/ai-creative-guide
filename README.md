@@ -23,18 +23,22 @@ AIEDAP 마스터교원 신규 연수 「AI와 함께하는 교과 혁신: 최신
 - `config.js`의 `firebase`가 `null`이면 **체험 모드**입니다. 같은 브라우저의 탭끼리만 동기화되고 강사 화면은 비밀번호 없이 열립니다(공유되는 데이터가 없음).
 - 강사 메모를 고치려면 `index.html`에서 `class="tnote only-t"` 상자를 찾아 바꿉니다. `only-t`는 강사 화면에만, `only-s`는 연수생 화면에만 보입니다.
 
-## Firebase 연결 (약 10분)
+## Firebase 연결 — AIEDAP 웹앱과 같은 프로젝트 사용
 
-1. **프로젝트** — https://console.firebase.google.com 에서 프로젝트를 만들거나 기존 프로젝트(예: aiedap 웹앱 프로젝트)를 씁니다.
-2. **웹 앱 추가** — 프로젝트 설정 > 내 앱 > `</>` → 나오는 `firebaseConfig = { ... }`의 중괄호 부분을 `config.js`의 `firebase: null` 자리에 붙여 넣습니다.
-3. **로그인 방법** — Authentication > 로그인 방법 > **이메일/비밀번호** 사용 설정. (익명 로그인은 필요 없습니다.)
-4. **강사 계정** — Authentication > 사용자 > 사용자 추가 → 이메일·비밀번호 입력 → 만들어진 행의 **사용자 UID**를 복사합니다.
-5. **Firestore** — Firestore Database > 데이터베이스 만들기(위치 `asia-northeast3 (서울)`, 프로덕션 모드).
-6. **강사 명단 등록** — Firestore > 데이터 > 컬렉션 시작: 컬렉션 ID `instructors`, 문서 ID에 **4번의 UID**를 붙여 넣고, 필드는 아무거나 하나(예: `name` = `강사`) 넣어 저장합니다.
-   강사가 여러 명이면 UID마다 문서를 하나씩 만듭니다. 이 명단에 없는 계정은 로그인해도 강사 화면에 들어갈 수 없습니다.
-7. **보안 규칙** — Firestore > 규칙 탭에 `firestore.rules` 내용을 붙여 넣고 **게시**합니다.
-   - 기존 프로젝트(aiedap 등)를 함께 쓰면, 기존 규칙을 지우지 말고 `firestore.rules`의 `function isInstructor`, `match /instructors/...`, `match /creativeRooms/...`, `function validState`, `function validTimer` 부분을 기존 `match /databases/{database}/documents { ... }` 안에 덧붙입니다.
-8. **승인된 도메인** — Authentication > 설정 > 승인된 도메인에 GitHub Pages 주소(`<사용자이름>.github.io`)를 추가합니다.
+이 페이지는 AIEDAP 모듈5 웹앱([ssoonson/aiedap](https://github.com/ssoonson/aiedap))과 같은 Firebase 프로젝트(`aiedap-ce609`)를 씁니다.
+`config.js`에는 이미 설정값이 들어 있고, 강사 로그인도 AIEDAP 웹앱에서 쓰던 **같은 강사 계정**으로 합니다.
+콘솔에서 아래 세 가지만 하면 됩니다.
+
+1. **규칙 게시** — Firestore > 규칙 탭에 이 저장소의 `firestore.rules` **전체**를 붙여 넣고, `teacher@example.com`을 강사 이메일로 바꾼 뒤 **게시**합니다.
+   - 이 파일은 두 웹앱의 규칙을 합친 것입니다. 한쪽 앱의 규칙만 붙여 넣으면 다른 앱이 동작하지 않으니 항상 합친 파일 전체를 게시하세요.
+   - aiedap 저장소의 `firestore.rules`도 같은 내용입니다. 어느 쪽을 써도 됩니다.
+2. **강사 명단 등록** — Authentication > 사용자에서 강사 계정 행의 **사용자 UID**를 복사합니다.
+   Firestore > 데이터 > 컬렉션 시작에서 컬렉션 ID는 `instructors`, 문서 ID는 복사한 UID로 하고, 필드를 하나(예: `name` = `강사`) 넣어 저장합니다.
+3. **승인된 도메인** — Authentication > 설정 > 승인된 도메인에 이 페이지 주소의 도메인(예: `ssoonson.github.io`)을 추가합니다.
+
+참고
+- 무료(Spark) 요금제의 하루 사용량(읽기 5만 회 등)을 두 웹앱이 나눠 씁니다. 이 페이지는 연수생 한 명이 진행이 바뀔 때마다 1회 정도만 읽어서 사용량이 적습니다.
+- 다른 Firebase 프로젝트로 옮기려면 `config.js`의 `firebase` 값을 그 프로젝트 것으로 바꾸고, 위 1~3을 그 프로젝트에서 하면 됩니다. 이 앱만 쓰는 프로젝트라면 `firestore.rules`의 ② 부분만 있어도 됩니다.
 
 ## 비밀번호·보안 관리
 
