@@ -1,0 +1,45 @@
+rules_version = '2';
+// AI 창작 따라하기 — Firestore 보안 규칙
+// 강사 판별은 이메일이 아니라 instructors/{uid} 문서로 합니다.
+// instructors 문서는 Firebase 콘솔에서만 만들 수 있고(웹에서는 쓰기 금지),
+// 이 파일에도 config.js에도 강사 계정 정보가 들어가지 않습니다.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isInstructor() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/instructors/$(request.auth.uid));
+    }
+
+    // 강사 명단: 본인 문서만 읽기(강사 여부 확인용), 웹에서는 누구도 쓰지 못함
+    match /instructors/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // 진행 상태: 연수생은 로그인 없이 읽기만, 강사만 바꿈
+    match /creativeRooms/{room} {
+      allow read: if room.matches('^[a-z0-9-]{1,30}$');
+      allow create, update: if isInstructor()
+        && room.matches('^[a-z0-9-]{1,30}$')
+        && validState(request.resource.data);
+      allow delete: if isInstructor();
+    }
+
+    function validState(d) {
+      return d.keys().hasOnly(['view', 'follow', 'timer', 'updatedAt'])
+        && (!('view' in d) || d.view in ['start', 'image', 'music', 'story', 'news', 'wrap'])
+        && (!('follow' in d) || d.follow is bool)
+        && (!('timer' in d) || d.timer == null || validTimer(d.timer))
+        && d.updatedAt == request.time;
+    }
+
+    function validTimer(t) {
+      return t is map
+        && t.keys().hasOnly(['label', 'end', 'left'])
+        && t.label is string && t.label.size() <= 40
+        && t.end is int
+        && (t.left == null || (t.left is int && t.left >= 0 && t.left <= 7200000));
+    }
+  }
+}

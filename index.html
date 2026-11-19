@@ -222,7 +222,21 @@ input[type=range] { width: 100%; accent-color: var(--acc); }
 .roles { display: flex; background: var(--sunken); border: 1px solid var(--line); border-radius: 99px; padding: 3px; }
 .roles button { border: 0; background: transparent; padding: 5px 13px; border-radius: 99px; font: 700 14px var(--body); color: var(--muted); cursor: pointer; white-space: nowrap; }
 .roles button[aria-selected="true"] { background: var(--ink); color: var(--bg); }
-.ttools { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+.pill { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 99px; background: var(--sunken); color: var(--muted); white-space: nowrap; }
+.pill.ok { background: var(--sto-soft); color: var(--sto); }
+.pill.warn { background: #fdebd8; color: #8a4b12; }
+.top .tbar { padding-block: 0 10px; gap: 8px; }
+.tbar .chk { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer; }
+.tbar .sp { flex: 1; }
+.tbar .tstat { font-size: 13px; color: var(--muted); }
+.tbar .tstat.err { color: var(--img); }
+.btn[aria-pressed="true"].live { background: var(--sto); border-color: var(--sto); color: #fff; }
+.top .livebar { padding-block: 0 10px; }
+.livebar > div { flex: 1; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--news-soft); color: var(--ink); border-radius: 10px; padding: 8px 12px; font-size: 15px; }
+nav.tabs a.live { box-shadow: 0 0 0 2px var(--sto); }
+nav.tabs a.live::after { content: "진행 중"; font-size: 11px; font-weight: 700; color: var(--sto); }
+nav.tabs a.live[aria-current="page"]::after { color: inherit; }
+.ov-card input[type=email] { width: 100%; font: 16px var(--body); padding: 10px 12px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
 html[data-role="student"] .only-t, html[data-role="student"] [data-timer], html[data-role="instructor"] .only-s { display: none !important; }
 html[data-role="instructor"][data-notes="off"] .tnote { display: none !important; }
 .tnote { border: 2px dashed var(--acc); background: var(--surface); border-radius: 10px; padding: 12px 16px; display: grid; gap: 4px; font-size: 15px; }
@@ -248,11 +262,20 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
       <button type="button" role="tab" id="tab-s" aria-selected="true">📚 연수생</button>
       <button type="button" role="tab" id="tab-t" aria-selected="false">👨‍🏫 강사</button>
     </div>
-    <div class="ttools only-t">
-      <button type="button" class="btn sm" id="btnQr">📱 참여 QR</button>
-      <button type="button" class="btn sm" id="btnNotes" aria-pressed="true">강사 메모 숨기기</button>
-    </div>
+    <span class="pill" id="syncPill" hidden></span>
     <div class="prog only-s" title="체크한 실습 단계 수"><span id="progTxt">0 / 0</span><span class="bar"><i id="progBar"></i></span></div>
+  </div>
+  <div class="wrap tbar only-t">
+    <button type="button" class="btn sm live" id="btnBcast" aria-pressed="true" title="켜 두면 강사가 고른 단계가 연수생 화면에 실시간으로 전달됩니다">📡 진행 공유 켜짐</button>
+    <label class="chk" title="끄면 연수생 화면이 자동으로 이동하지 않고 위쪽 알림만 보입니다"><input type="checkbox" id="chkFollow" checked> 연수생 화면 자동 이동</label>
+    <span class="tstat" id="tStat" aria-live="polite"></span>
+    <span class="sp"></span>
+    <button type="button" class="btn sm" id="btnQr">📱 참여 QR</button>
+    <button type="button" class="btn sm" id="btnNotes" aria-pressed="true">강사 메모 숨기기</button>
+    <button type="button" class="btn sm" id="btnLogout">로그아웃</button>
+  </div>
+  <div class="wrap livebar only-s" id="liveBar" hidden>
+    <div role="status"><span>📡 강사님이 지금 <b id="liveName"></b> 단계를 진행 중이에요.</span><a class="btn sm" id="liveGo" href="#start">이동하기</a></div>
   </div>
   <div class="wrap">
     <nav class="tabs" aria-label="연수 단계">
@@ -274,7 +297,7 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
     <div class="eyebrow">AI와 함께하는 교과 혁신</div>
     <h2>최신 기술 체험과 적용 실습</h2>
     <p class="lead only-s">강사 화면을 보면서 이 페이지에서 같은 단계를 따라 해 주세요. 끝낸 단계는 체크하면 위쪽 진행 막대에 반영됩니다. 체크 기록은 지금 쓰는 브라우저에만 남습니다.</p>
-    <p class="lead only-t">강사용 화면입니다. 이 화면을 띄우고 진행하세요. 연수생 화면에는 없는 강사 메모(점선 상자)와 활동 타이머, 정답 공개가 함께 보입니다. 화면에 띄울 때 메모를 감추려면 위쪽 ‘강사 메모 숨기기’를 누르세요.</p>
+    <p class="lead only-t">강사용 화면입니다. 이 화면을 띄우고 진행하세요. ‘📡 진행 공유’가 켜져 있으면 강사가 고른 단계와 타이머가 연수생 화면에 실시간으로 전달됩니다. 강사 메모(점선 상자)는 연수생에게 보이지 않으며, 화면에 띄울 때 감추려면 위쪽 ‘강사 메모 숨기기’를 누르세요.</p>
     <p class="small muted">강사 손우재 · 경남권역 명진초</p>
   </div>
 
@@ -823,14 +846,15 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
 
 <div class="timerbox" id="timerBox" hidden role="timer" aria-live="off">
   <div><div class="tl" id="timerLabel">활동</div><div class="tv" id="timerVal">05:00</div></div>
-  <button id="timerPause">일시정지</button><button id="timerClose">닫기</button>
+  <button id="timerPause" class="only-t">일시정지</button><button id="timerClose">닫기</button>
 </div>
 <div class="lb" id="lb" hidden><img id="lbImg" alt=""></div>
 <div class="ov" id="gate" hidden>
   <form class="ov-card" id="gateForm" role="dialog" aria-modal="true" aria-labelledby="gateH">
     <h3 id="gateH">👨‍🏫 강사 화면</h3>
-    <p class="small muted" style="margin:0">강사 비밀번호를 입력하세요.</p>
-    <input type="password" id="gatePw" autocomplete="current-password" aria-label="강사 비밀번호">
+    <p class="small muted" style="margin:0" id="gateHint">Firebase에 등록한 강사 계정으로 로그인하세요.</p>
+    <input type="email" id="gateEmail" autocomplete="username" placeholder="강사 이메일" aria-label="강사 이메일" spellcheck="false">
+    <input type="password" id="gatePw" autocomplete="current-password" placeholder="비밀번호" aria-label="강사 비밀번호">
     <p class="err" id="gateMsg" aria-live="polite"></p>
     <div class="row" style="justify-content:flex-end"><button type="button" class="btn" id="gateCancel">취소</button><button type="submit" class="btn solid">입장</button></div>
   </form>
@@ -843,6 +867,7 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
     <button type="button" class="btn" id="qrClose">닫기</button>
   </div>
 </div>
+<script src="config.js"></script>
 <script src="assets/qrcode.js"></script>
 
 <script>
@@ -863,6 +888,7 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
     const cur = $(`nav.tabs a[data-v="${v}"]`); cur && cur.scrollIntoView({ block: 'nearest', inline: 'center' });
     window.scrollTo(0, 0);
     if (v === 'wrap') renderSummary();
+    afterShow(v);
   }
   addEventListener('hashchange', show);
 
@@ -967,26 +993,6 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
   renderTok();
 
 
-  /* ---------- timer ---------- */
-  let tEnd = 0, tLeft = 0, tInt = null, paused = false;
-  const fmt = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
-  function beep() { try { const a = new (window.AudioContext || window.webkitAudioContext)(); [0, .35, .7].forEach(d => { const o = a.createOscillator(), g = a.createGain(); o.frequency.value = 880; o.connect(g); g.connect(a.destination); g.gain.setValueAtTime(.2, a.currentTime + d); g.gain.exponentialRampToValueAtTime(.001, a.currentTime + d + .3); o.start(a.currentTime + d); o.stop(a.currentTime + d + .3); }); } catch {} }
-  function tick() {
-    const s = Math.max(0, Math.ceil((tEnd - Date.now()) / 1000)); $('#timerVal').textContent = fmt(s);
-    if (s === 0) { clearInterval(tInt); tInt = null; $('#timerBox').classList.add('done'); $('#timerLabel').textContent += ' · 끝'; $('#timerPause').hidden = true; beep(); }
-  }
-  document.addEventListener('click', e => {
-    const b = e.target.closest('[data-timer]'); if (!b) return;
-    clearInterval(tInt); paused = false; tEnd = Date.now() + (+b.dataset.timer) * 1000;
-    $('#timerLabel').textContent = b.dataset.label; $('#timerBox').hidden = false; $('#timerBox').classList.remove('done');
-    $('#timerPause').hidden = false; $('#timerPause').textContent = '일시정지'; tick(); tInt = setInterval(tick, 250);
-  });
-  $('#timerPause').addEventListener('click', () => {
-    if (!paused) { tLeft = tEnd - Date.now(); clearInterval(tInt); paused = true; $('#timerPause').textContent = '계속'; }
-    else { tEnd = Date.now() + tLeft; paused = false; tInt = setInterval(tick, 250); $('#timerPause').textContent = '일시정지'; }
-  });
-  $('#timerClose').addEventListener('click', () => { clearInterval(tInt); tInt = null; $('#timerBox').hidden = true; });
-
   /* ---------- lightbox ---------- */
   document.addEventListener('click', e => {
     const z = e.target.closest('img.zoom'); if (z) { $('#lbImg').src = z.src; $('#lbImg').alt = z.alt; $('#lb').hidden = false; return; }
@@ -994,11 +1000,168 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
   });
   addEventListener('keydown', e => { if (e.key === 'Escape') $('#lb').hidden = true; });
 
-  /* ---------- role: 연수생 / 강사 ---------- */
-  // 강사 화면 비밀번호 — 여기서 바꾸세요. (정적 페이지라 소스 보기로 알 수 있는 ‘가벼운 잠금’입니다)
-  const INSTRUCTOR_PW = '1234';
+  /* ---------- 실시간 동기화: Firebase (config.js에 설정이 없으면 체험 모드) ---------- */
+  const CFG = window.APP_CONFIG;
   const root = document.documentElement;
-  const sess = { get(k) { try { return sessionStorage.getItem(k); } catch { return null; } }, set(k, v) { try { sessionStorage.setItem(k, v); } catch {} } };
+  const sess = {
+    get(k) { try { return sessionStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { sessionStorage.setItem(k, v); } catch {} },
+    del(k) { try { sessionStorage.removeItem(k); } catch {} }
+  };
+  const VIEW_NAMES = { start: '시작', image: '01 이미지', music: '02 음악', story: '03 글쓰기', news: '실습 · 30초 미래 뉴스', wrap: '마무리' };
+  const DEFAULT_ROOM = String((CFG && CFG.defaultRoom) || 'creative');
+  const ROOM = String(new URLSearchParams(location.search).get('room') || DEFAULT_ROOM).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 30) || 'creative';
+  const curView = () => views.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'start';
+  let sync = null, state = {}, firstState = true;
+
+  // 체험 모드: 같은 브라우저의 탭끼리만 localStorage로 동기화 (비밀값 없음, 공유 데이터 없음)
+  function makeDemoSync() {
+    const KEY = 'aiedap-sync-' + ROOM, fns = [];
+    const read = () => store.get(KEY, {});
+    addEventListener('storage', e => { if (e.key === KEY) fns.forEach(f => f(read())); });
+    return {
+      demo: true,
+      isInstructor: () => sess.get('aiedap-demo-t') === '1',
+      async login() { sess.set('aiedap-demo-t', '1'); },
+      async logout() { sess.del('aiedap-demo-t'); },
+      onState(fn) { fns.push(fn); fn(read()); },
+      async setState(p) { const d = { ...read(), ...p }; store.set(KEY, d); fns.forEach(f => f(d)); }
+    };
+  }
+
+  // Firebase: 강사 비밀번호는 Firebase Authentication에만 있고, 강사 여부는 Firestore 규칙이 판단합니다.
+  async function makeFirebaseSync(cfg) {
+    const V = '10.12.2', base = `https://www.gstatic.com/firebasejs/${V}/`;
+    const [appMod, authMod, fs] = await Promise.all([
+      import(base + 'firebase-app.js'), import(base + 'firebase-auth.js'), import(base + 'firebase-firestore.js')
+    ]);
+    const app = appMod.initializeApp(cfg);
+    const auth = authMod.getAuth(app), db = fs.getFirestore(app);
+    // 로컬 테스트용(config.js에 emulator: true를 넣었을 때만): Firebase 에뮬레이터에 연결
+    if (CFG.emulator === true && /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) {
+      authMod.connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+      fs.connectFirestoreEmulator(db, '127.0.0.1', 8080);
+    }
+    // 로그인은 이 탭에만 유지 — 탭(브라우저)을 닫으면 자동 로그아웃
+    await authMod.setPersistence(auth, authMod.browserSessionPersistence);
+    const ref = fs.doc(db, 'creativeRooms', ROOM);
+    let admin = false;
+    async function check(u) {
+      admin = false;
+      if (!u || u.isAnonymous) return false;
+      try { admin = (await fs.getDoc(fs.doc(db, 'instructors', u.uid))).exists(); } catch { admin = false; }
+      return admin;
+    }
+    await new Promise(res => { const un = authMod.onAuthStateChanged(auth, async u => { un(); await check(u); res(); }); });
+    return {
+      demo: false,
+      isInstructor: () => admin,
+      async login(email, pw) {
+        try { await authMod.signInWithEmailAndPassword(auth, email, pw); }
+        catch (e) {
+          const c = e.code || '';
+          if (/too-many-requests/.test(c)) throw new Error('로그인 시도가 너무 많아 잠시 막혔어요. 몇 분 뒤 다시 해 주세요.');
+          if (/network-request-failed/.test(c)) throw new Error('인터넷 연결을 확인해 주세요.');
+          if (/operation-not-allowed/.test(c)) throw new Error('Firebase > Authentication에서 이메일/비밀번호 로그인을 켜 주세요.');
+          if (/unauthorized-domain/.test(c)) throw new Error('Firebase > Authentication > 설정 > 승인된 도메인에 이 사이트 주소를 추가해 주세요.');
+          // 이메일이 틀렸는지 비밀번호가 틀렸는지 구분해 알려 주지 않음(계정 추측 방지)
+          throw new Error('이메일 또는 비밀번호가 맞지 않아요.');
+        }
+        if (!await check(auth.currentUser)) { await authMod.signOut(auth); throw new Error('강사로 등록되지 않은 계정이에요. (Firestore의 instructors 명단 확인)'); }
+      },
+      async logout() { await authMod.signOut(auth); admin = false; },
+      onState(fn) { fs.onSnapshot(ref, d => fn(d.exists() ? d.data() : {}), e => { console.error(e); setPill('⚠ 연결 오류', 'warn'); }); },
+      async setState(p) { await fs.setDoc(ref, { ...p, updatedAt: fs.serverTimestamp() }, { merge: true }); }
+    };
+  }
+
+  function setPill(text, cls) { const p = $('#syncPill'); p.hidden = !text; p.textContent = text || ''; p.className = 'pill' + (cls ? ' ' + cls : ''); }
+  const canPush = () => sync && sync.isInstructor() && root.dataset.role === 'instructor';
+  function push(p) {
+    if (!canPush()) return;
+    sync.setState(p).then(() => { $('#tStat').textContent = ''; $('#tStat').classList.remove('err'); })
+      .catch(e => { console.error(e); $('#tStat').textContent = '⚠ 저장하지 못했어요: ' + (e.code || e.message); $('#tStat').classList.add('err'); });
+  }
+
+  function applyState(d) {
+    const prev = state; state = d || {};
+    const v = views.includes(state.view) ? state.view : null;
+    // 연수생: 강사가 단계를 바꾸면 따라 이동 (처음 접속 때 주소에 단계가 있으면 그대로 둠)
+    if (root.dataset.role === 'student' && v && state.follow !== false && v !== prev.view && !(firstState && location.hash) && curView() !== v) location.hash = v;
+    firstState = false;
+    $('#chkFollow').checked = state.follow !== false;
+    renderLive();
+    applyTimer(state.timer || null);
+  }
+  function renderLive() {
+    const v = views.includes(state.view) ? state.view : null;
+    $$('nav.tabs a').forEach(a => a.classList.toggle('live', a.dataset.v === v));
+    const show = !!v && root.dataset.role === 'student' && curView() !== v;
+    $('#liveBar').hidden = !show;
+    if (show) { $('#liveName').textContent = VIEW_NAMES[v]; $('#liveGo').href = '#' + v; }
+  }
+  // 강사가 단계를 옮기면(진행 공유가 켜져 있을 때) 연수생에게 전달
+  const bcastOn = () => sess.get('aiedap-bcast') !== '0';
+  function afterShow(v) { if (bcastOn() && state.view !== v) push({ view: v }); renderLive(); }
+  function setBcast(on) {
+    sess.set('aiedap-bcast', on ? '1' : '0');
+    $('#btnBcast').setAttribute('aria-pressed', String(on));
+    $('#btnBcast').textContent = on ? '📡 진행 공유 켜짐' : '📡 진행 공유 꺼짐';
+  }
+  $('#btnBcast').addEventListener('click', () => { const on = !bcastOn(); setBcast(on); if (on) push({ view: curView() }); });
+  setBcast(bcastOn());
+  $('#chkFollow').addEventListener('change', e => push({ follow: e.target.checked }));
+
+  /* ---------- timer (강사가 시작하면 연수생 화면에도 같은 시간이 보임) ---------- */
+  let T = null, tInt = null, dismissed = null, beeped = null;
+  const fmt = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+  function beep() { try { const a = new (window.AudioContext || window.webkitAudioContext)(); [0, .35, .7].forEach(d => { const o = a.createOscillator(), g = a.createGain(); o.frequency.value = 880; o.connect(g); g.connect(a.destination); g.gain.setValueAtTime(.2, a.currentTime + d); g.gain.exponentialRampToValueAtTime(.001, a.currentTime + d + .3); o.start(a.currentTime + d); o.stop(a.currentTime + d + .3); }); } catch {} }
+  function applyTimer(t) {
+    clearInterval(tInt); tInt = null; T = t;
+    const stale = t && t.left == null && t.end < Date.now() - 60000; // 끝난 지 1분 지난 타이머는 감춤
+    if (!t || stale || dismissed === t.end) { $('#timerBox').hidden = true; return; }
+    $('#timerBox').hidden = false;
+    $('#timerPause').textContent = t.left != null ? '계속' : '일시정지';
+    tick(); if (t.left == null) tInt = setInterval(tick, 250);
+  }
+  function tick() {
+    if (!T) return;
+    const s = Math.max(0, Math.ceil((T.left != null ? T.left : T.end - Date.now()) / 1000));
+    const done = s === 0;
+    $('#timerVal').textContent = fmt(s);
+    $('#timerLabel').textContent = T.label + (done ? ' · 끝' : '');
+    $('#timerBox').classList.toggle('done', done);
+    $('#timerPause').hidden = done;
+    if (done) { clearInterval(tInt); tInt = null; if (beeped !== T.end && T.end > Date.now() - 5000) { beeped = T.end; beep(); } }
+  }
+  function setTimer(t) { dismissed = null; push({ timer: t }); applyTimer(t); }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-timer]'); if (!b) return;
+    setTimer({ label: String(b.dataset.label).slice(0, 40), end: Date.now() + (+b.dataset.timer) * 1000, left: null });
+  });
+  $('#timerPause').addEventListener('click', () => {
+    if (!T) return;
+    if (T.left == null) setTimer({ label: T.label, end: T.end, left: Math.max(0, T.end - Date.now()) });
+    else setTimer({ label: T.label, end: Date.now() + T.left, left: null });
+  });
+  // 강사가 닫으면 모두에게서 닫히고, 연수생이 닫으면 자기 화면에서만 닫힘
+  $('#timerClose').addEventListener('click', () => {
+    if (root.dataset.role === 'instructor') setTimer(null);
+    else { dismissed = T && T.end; applyTimer(T); }
+  });
+
+  // 동기화 시작 (타이머 등 위 선언이 모두 끝난 뒤)
+  const ready = (async () => {
+    if (!CFG) { setPill('⚠ config.js 오류', 'warn'); return; }
+    if (!CFG.firebase) { sync = makeDemoSync(); setPill('체험 모드'); $('#syncPill').title = 'config.js에 Firebase 설정을 넣기 전에는 이 브라우저의 탭끼리만 동기화돼요.'; }
+    else {
+      try { sync = await makeFirebaseSync(CFG.firebase); setPill('● 실시간', 'ok'); }
+      catch (e) { console.error(e); setPill('⚠ 서버 연결 안 됨', 'warn'); return; }
+    }
+    sync.onState(applyState);
+  })();
+
+  /* ---------- role: 연수생 / 강사 ---------- */
   function setRole(r) {
     root.dataset.role = r;
     $('#tab-s').setAttribute('aria-selected', String(r === 'student'));
@@ -1007,20 +1170,34 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
     if (r === 'instructor') u.searchParams.set('role', 'instructor'); else u.searchParams.delete('role');
     history.replaceState(null, '', u);
     document.title = r === 'instructor' ? 'AI 창작 따라하기 · 강사' : 'AI 창작 따라하기';
+    renderLive();
   }
   function openGate() {
-    if (sess.get('aiedap-instructor') === '1') { setRole('instructor'); return; }
-    $('#gateMsg').textContent = ''; $('#gatePw').value = ''; $('#gate').hidden = false; $('#gatePw').focus();
+    if (sync && sync.isInstructor()) { setRole('instructor'); return; }
+    const demo = sync && sync.demo;
+    $('#gateHint').textContent = demo ? '체험 모드입니다(Firebase 연결 전). 아무것도 입력하지 않고 입장할 수 있어요.' : 'Firebase에 등록한 강사 계정으로 로그인하세요.';
+    $('#gateMsg').textContent = ''; $('#gatePw').value = ''; $('#gate').hidden = false;
+    ($('#gateEmail').value ? $('#gatePw') : $('#gateEmail')).focus();
   }
-  function closeGate() { $('#gate').hidden = true; }
+  function closeGate() { $('#gate').hidden = true; $('#gatePw').value = ''; }
   $('#tab-s').addEventListener('click', () => setRole('student'));
   $('#tab-t').addEventListener('click', openGate);
   $('#gateCancel').addEventListener('click', () => { closeGate(); setRole('student'); });
-  $('#gateForm').addEventListener('submit', e => {
+  $('#gateForm').addEventListener('submit', async e => {
     e.preventDefault();
-    if ($('#gatePw').value !== INSTRUCTOR_PW) { $('#gateMsg').textContent = '비밀번호가 맞지 않아요.'; $('#gatePw').select(); return; }
-    sess.set('aiedap-instructor', '1'); closeGate(); setRole('instructor');
+    const btn = $('#gateForm button[type=submit]'), email = $('#gateEmail').value.trim(), pw = $('#gatePw').value;
+    $('#gatePw').value = '';
+    btn.disabled = true; $('#gateMsg').textContent = '확인 중…';
+    try {
+      await ready;
+      if (!sync) throw new Error('서버(Firebase)에 연결되지 않아 로그인할 수 없어요. config.js와 인터넷 연결을 확인해 주세요.');
+      if (!sync.demo && (!email || !pw)) throw new Error('이메일과 비밀번호를 입력해 주세요.');
+      await sync.login(email, pw);
+      $('#gateMsg').textContent = ''; closeGate(); setRole('instructor');
+    } catch (err) { $('#gateMsg').textContent = err.message; $('#gatePw').focus(); }
+    finally { btn.disabled = false; }
   });
+  $('#btnLogout').addEventListener('click', async () => { try { if (sync) await sync.logout(); } catch (e) { console.error(e); } setRole('student'); });
   // 강사 메모 켜기/끄기 (화면에 띄울 때 감추기)
   function setNotes(on) {
     root.dataset.notes = on ? 'on' : 'off';
@@ -1030,9 +1207,9 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
   }
   $('#btnNotes').addEventListener('click', () => setNotes(root.dataset.notes === 'off'));
   setNotes(store.get('aiedap-notes', true));
-  // 참여 QR: 연수생 화면 주소(쿼리·해시 없이)
+  // 참여 QR: 연수생 화면 주소(차수 코드가 기본값이 아니면 함께 넣음)
   $('#btnQr').addEventListener('click', () => {
-    const url = location.origin + location.pathname;
+    const url = location.origin + location.pathname + (ROOM !== DEFAULT_ROOM ? '?room=' + ROOM : '');
     let svg = '';
     try { const qr = qrcode(0, 'M'); qr.addData(unescape(encodeURIComponent(url))); qr.make(); svg = qr.createSvgTag({ cellSize: 8, margin: 2, scalable: true }); } catch { svg = '<p>QR을 만들지 못했어요.</p>'; }
     $('#qrBox').innerHTML = svg; $('#qrUrl').textContent = url.replace(/^https?:\/\//, ''); $('#qrOv').hidden = false;
@@ -1040,7 +1217,9 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
   $('#qrClose').addEventListener('click', () => { $('#qrOv').hidden = true; });
   $('#qrOv').addEventListener('click', e => { if (e.target === $('#qrOv')) $('#qrOv').hidden = true; });
   addEventListener('keydown', e => { if (e.key !== 'Escape') return; $('#qrOv').hidden = true; if (!$('#gate').hidden) { closeGate(); setRole('student'); } });
-  if (new URLSearchParams(location.search).get('role') === 'instructor') { setRole('student'); openGate(); } else setRole('student');
+  const wantInstructor = new URLSearchParams(location.search).get('role') === 'instructor';
+  setRole('student');
+  if (wantInstructor) ready.then(openGate);
 
   progress(); show();
 })();
