@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-role="student">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -217,13 +217,42 @@ input[type=range] { width: 100%; accent-color: var(--acc); }
 .foot { color: var(--muted); font-size: 13px; padding-top: 8px; }
 .pager { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* role: 연수생 / 강사 */
+.roles { display: flex; background: var(--sunken); border: 1px solid var(--line); border-radius: 99px; padding: 3px; }
+.roles button { border: 0; background: transparent; padding: 5px 13px; border-radius: 99px; font: 700 14px var(--body); color: var(--muted); cursor: pointer; white-space: nowrap; }
+.roles button[aria-selected="true"] { background: var(--ink); color: var(--bg); }
+.ttools { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+html[data-role="student"] .only-t, html[data-role="student"] [data-timer], html[data-role="instructor"] .only-s { display: none !important; }
+html[data-role="instructor"][data-notes="off"] .tnote { display: none !important; }
+.tnote { border: 2px dashed var(--acc); background: var(--surface); border-radius: 10px; padding: 12px 16px; display: grid; gap: 4px; font-size: 15px; }
+.tnote > .tl { font-size: 12px; font-weight: 700; color: var(--acc); letter-spacing: .04em; }
+.tnote ul { margin: 0; padding-left: 20px; }
+.ov { position: fixed; inset: 0; z-index: 60; background: rgba(10,12,18,.7); display: grid; place-items: center; padding: 16px; }
+.ov-card { background: var(--surface); color: var(--ink); border-radius: 16px; padding: 24px; width: min(100%, 380px); display: grid; gap: 12px; box-shadow: 0 20px 50px rgba(0,0,0,.3); }
+.ov-card input[type=password] { width: 100%; font: 16px var(--body); padding: 10px 12px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.ov-card .err { color: var(--img); min-height: 1.4em; margin: 0; font-size: 14px; }
+.ov-card.qr { width: min(100%, 560px); text-align: center; justify-items: center; }
+.ov-card.qr #qrBox { width: min(100%, 420px); background: #fff; border-radius: 12px; padding: 10px; }
+.ov-card.qr #qrBox svg { display: block; width: 100%; height: auto; }
+.ov-card.qr .url { font-family: var(--mono); font-size: 18px; word-break: break-all; }
+.btn.solid { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+@media (max-width: 520px) { .roles button { padding: 5px 10px; font-size: 13px; } .brand small { display: none; } }
 </style>
 </head>
 <body>
 <header class="top">
   <div class="wrap">
     <div class="brand">AI 창작 따라하기<small>AIEDAP 마스터교원 신규 연수</small></div>
-    <div class="prog" title="체크한 실습 단계 수"><span id="progTxt">0 / 0</span><span class="bar"><i id="progBar"></i></span></div>
+    <div class="roles" role="tablist" aria-label="화면 선택">
+      <button type="button" role="tab" id="tab-s" aria-selected="true">📚 연수생</button>
+      <button type="button" role="tab" id="tab-t" aria-selected="false">👨‍🏫 강사</button>
+    </div>
+    <div class="ttools only-t">
+      <button type="button" class="btn sm" id="btnQr">📱 참여 QR</button>
+      <button type="button" class="btn sm" id="btnNotes" aria-pressed="true">강사 메모 숨기기</button>
+    </div>
+    <div class="prog only-s" title="체크한 실습 단계 수"><span id="progTxt">0 / 0</span><span class="bar"><i id="progBar"></i></span></div>
   </div>
   <div class="wrap">
     <nav class="tabs" aria-label="연수 단계">
@@ -244,10 +273,12 @@ input[type=range] { width: 100%; accent-color: var(--acc); }
   <div class="head">
     <div class="eyebrow">AI와 함께하는 교과 혁신</div>
     <h2>최신 기술 체험과 적용 실습</h2>
-    <p class="lead">강사 화면을 보면서 이 페이지에서 같은 단계를 따라 해 주세요. 끝낸 단계는 체크하면 위쪽 진행 막대에 반영됩니다. 체크 기록은 지금 쓰는 브라우저에만 남습니다.</p>
+    <p class="lead only-s">강사 화면을 보면서 이 페이지에서 같은 단계를 따라 해 주세요. 끝낸 단계는 체크하면 위쪽 진행 막대에 반영됩니다. 체크 기록은 지금 쓰는 브라우저에만 남습니다.</p>
+    <p class="lead only-t">강사용 화면입니다. 이 화면을 띄우고 진행하세요. 연수생 화면에는 없는 강사 메모(점선 상자)와 활동 타이머, 정답 공개가 함께 보입니다. 화면에 띄울 때 메모를 감추려면 위쪽 ‘강사 메모 숨기기’를 누르세요.</p>
     <p class="small muted">강사 손우재 · 경남권역 명진초</p>
   </div>
 
+<div class="tnote only-t"><span class="tl">👨‍🏫 진행 안내</span><ul><li>위쪽 <b>📱 참여 QR</b>을 띄워 연수생이 휴대폰·노트북으로 연수생 화면에 들어오게 합니다.</li><li>아래 ‘시작 전 준비’ 세 가지(Google 로그인 Chrome, 번역기 탭, 이어폰)를 함께 확인하고 시작합니다.</li><li>진행 순서: 01 이미지(Quick, Draw! 5분 · Say What You See 5분) → 02 음악(Blob Opera 2분+5분, Gemini·Canva) → 03 글쓰기(다음 토큰 체험) → 실습 30초 미래 뉴스(40분) → 마무리</li></ul></div>
   <div class="block">
     <header><h3>학습목표</h3></header>
     <ol class="flow" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr))">
@@ -310,6 +341,7 @@ input[type=range] { width: 100%; accent-color: var(--acc); }
       <label class="step"><input type="checkbox" data-k="img-qd-2"><span><span class="st">6개 낱말 그리기</span><span class="sd">AI가 그리는 도중에 무엇이라고 추측하는지 들어 보세요.</span></span></label>
       <label class="step"><input type="checkbox" data-k="img-qd-3"><span><span class="st">결과 화면에서 AI가 못 맞힌 그림 눌러 보기</span><span class="sd">다른 사람들이 같은 낱말을 어떻게 그렸는지 비교해 봅니다. 이것이 AI의 학습 데이터입니다.</span></span></label>
     </div>
+<div class="tnote only-t"><span class="tl">👨‍🏫 강사 메모</span><ul><li>활동 뒤 발문: “AI가 못 맞힌 그림은 왜 그랬을까요?” → 다른 사람들의 그림(학습 데이터)과 비교하며 ‘학습 = 공통 특징 찾기’로 연결합니다.</li><li>AutoDraw를 함께 보여 주면 같은 학습 데이터가 ‘그림 추천’에도 쓰인다는 점을 짚을 수 있습니다.</li></ul></div>
     <div class="row">
       <a class="btn go" href="https://quickdraw.withgoogle.com/" target="_blank" rel="noopener">Quick, Draw! 열기</a>
       <a class="btn" href="https://www.autodraw.com/" target="_blank" rel="noopener">AutoDraw 열기</a>
@@ -357,6 +389,7 @@ input[type=range] { width: 100%; accent-color: var(--acc); }
       <div class="block" style="padding:16px"><span class="kind" style="justify-self:start">생성 · 이미지 생성 AI</span><p>‘들판의 강아지 그림’ → <b>새로운 그림</b></p><p class="small muted">학습한 특징으로 그림을 예측해 만듦</p></div>
     </div>
     <p class="small">AI의 결과는 ‘정답’이 아니라, 학습한 데이터로 볼 때 확률이 가장 높은 ‘예측’입니다.</p>
+    <div class="tnote only-t"><span class="tl">👨‍🏫 강사 메모</span><ul><li>막대를 천천히 움직이거나 ‘자동 재생’으로 잡음이 걷히는 과정을 보여 준 뒤, 아래 분류(Quick, Draw!)와 생성(이미지 생성 AI)의 차이를 비교합니다.</li></ul></div>
   </div>
 
   <div class="block tint">
@@ -371,8 +404,8 @@ input[type=range] { width: 100%; accent-color: var(--acc); }
           <div><b>배경</b><span class="small">어디에 있나요?</span></div>
           <div><b>표현 방식</b><span class="small">어떤 재료·화풍인가요?</span></div>
         </div>
-        <details>
-          <summary>정답 프롬프트 보기</summary>
+        <details class="only-t">
+          <summary>정답 프롬프트 보기 (강사용)</summary>
           <p style="font-family:var(--mono)">A painting of a dog in a field</p>
           <p class="small muted">a painting(그림) · a dog(강아지) · in a field(들판에서). 8개의 낱말로 만들어졌습니다.</p>
         </details>
@@ -395,6 +428,7 @@ input[type=range] { width: 100%; accent-color: var(--acc); }
       <a class="btn go" href="https://artsandculture.google.com/experiment/say-what-you-see/jwG3m7wQShZngw" target="_blank" rel="noopener">Say What You See 열기</a>
       <button class="btn timer" data-timer="300" data-label="Say What You See">5분 타이머</button>
     </div>
+<div class="tnote only-t"><span class="tl">👨‍🏫 강사 메모</span><ul><li>정답 프롬프트는 연수생 화면에 나오지 않습니다. 활동을 마친 뒤 이 화면에서 공개하세요.</li><li>영어만 지원하므로 번역기 탭을 미리 열어 두었는지 확인합니다.</li></ul></div>
     <p class="foot">출처: Google Arts and Culture, Say What You See</p>
   </div>
   <div class="pager"><a class="btn" href="#start">← 시작</a><a class="btn" href="#music">02 음악으로 →</a></div>
@@ -442,6 +476,7 @@ input[type=range] { width: 100%; accent-color: var(--acc); }
       <button class="btn timer" data-timer="120" data-label="Blob Opera 자유 탐색">2분 타이머</button>
       <button class="btn timer" data-timer="300" data-label="Blob Opera 개별 활동">5분 타이머</button>
     </div>
+<div class="tnote only-t"><span class="tl">👨‍🏫 강사 메모</span><ul><li>소리가 나는 활동입니다. 이어폰을 확인하고, 2분 자유 탐색 → 5분 개별 활동 순서로 타이머를 씁니다.</li><li>‘실제 가수의 녹음이 아니라 AI가 학습해 새로 만든 소리’라는 점을 한 번 더 짚어 줍니다.</li></ul></div>
     <p><b>Blob Opera로 수업하기</b></p>
     <div class="grid3">
       <div class="block" style="padding:14px"><span class="kind" style="justify-self:start">음높이와 가락</span><p class="small">블롭을 위아래로 움직이며 높낮이 변화를 듣고 짧은 가락 표현하기</p></div>
@@ -506,6 +541,7 @@ input[type=range] { width: 100%; accent-color: var(--acc); }
         <label class="step"><input type="checkbox" data-k="mus-gm-5"><span><span class="st">마음에 드는 트랙을 mp3로 저장</span></span></label>
       </div>
     </div>
+<div class="tnote only-t"><span class="tl">👨‍🏫 강사 메모</span><ul><li>Gemini 무료 버전의 음악 생성(30초) 가능 여부는 바뀔 수 있으니 연수 전에 직접 한 번 생성해 확인해 두세요.</li><li>시화가 없는 연수생은 왼쪽 예시 이미지를 저장해 첨부하도록 안내합니다.</li></ul></div>
     <a class="btn go" href="https://gemini.google.com/" target="_blank" rel="noopener" style="justify-self:start">Gemini 열기</a>
     <details>
       <summary>학생 계정 사용과 무료 버전 안내</summary>
@@ -571,6 +607,7 @@ input[type=range] { width: 100%; accent-color: var(--acc); }
       <button class="btn" id="tokRand">확률대로 뽑기</button>
       <button class="btn" id="tokReset">처음부터</button>
     </div>
+<div class="tnote only-t"><span class="tl">👨‍🏫 강사 메모</span><ul><li>먼저 ‘가장 높은 확률로 고르기’로 자연스러운 문장을 만든 뒤, ‘바나나’·‘달나라에서’처럼 확률이 낮은 후보를 직접 눌러 어색한 문장이 생기는 모습을 보여 줍니다.</li><li>이어서 할루시네이션을 설명하고, 미래 뉴스 실습의 ‘근거 확인하기’ 원칙으로 연결합니다.</li></ul></div>
     <p class="keyline">예측을 반복하면 문장이 됩니다. 그럴듯하지만 사실과 다른 답 = <b>할루시네이션</b></p>
     <p class="small">AI는 그럴듯한 말을 예측할 뿐, 내용이 사실인지는 스스로 확인하지 않아요. ‘바나나’, ‘달나라에서’처럼 확률이 낮은 말을 골라 보면 어색한 문장이 어떻게 생기는지 볼 수 있습니다.</p>
   </div>
@@ -601,6 +638,7 @@ input[type=range] { width: 100%; accent-color: var(--acc); }
         <li><b>편집·완성</b><span>Clipchamp 등</span></li>
       </ol>
     </div>
+<div class="tnote only-t"><span class="tl">👨‍🏫 강사 메모</span><ul><li>실습은 약 40분입니다. 시작할 때 40분 타이머를 띄워 두세요.</li><li>1단계에 들어가기 전에 아래 ‘짚고 가기: 가상 뉴스를 만들 때’ 세 가지 원칙을 먼저 안내합니다.</li><li>AI Studio·Claude 메뉴 이름과 요금 정책은 바뀔 수 있으니 연수 전에 화면을 확인해 두세요.</li></ul></div>
     <div class="row"><button class="btn timer" data-timer="2400" data-label="미래 뉴스 실습">40분 타이머</button>
       <a class="btn go" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini 열기</a>
       <a class="btn go" href="https://aistudio.google.com/" target="_blank" rel="noopener">AI Studio 열기</a></div>
@@ -760,7 +798,8 @@ input[type=range] { width: 100%; accent-color: var(--acc); }
     <a class="mod-card m-music" href="#music"><span class="n">02 음악</span><b>노래 → 새 목소리</b><span>성악가의 노래에서 특징을 배워 새 소리와 화음을 만든다</span></a>
     <a class="mod-card m-story" href="#story"><span class="n">03 글</span><b>앞의 말 → 다음 말</b><span>다음 토큰을 확률로 예측하고 반복해 문장을 만든다</span></a>
   </div>
-  <div class="block">
+<div class="tnote only-t"><span class="tl">👨‍🏫 마무리 안내</span><ul><li>정리 발문: “세 AI의 공통점은 무엇일까요?” → 많은 데이터에서 특징을 학습하고, 가장 그럴듯한 결과를 예측해 만든다.</li><li>결과는 ‘정답’이 아니라 ‘예측’이므로 수업에 쓰기 전 교사의 검토가 필요하다는 점으로 마무리합니다.</li></ul></div>
+  <div class="block only-s">
     <header><h3>나의 진행 상황</h3></header>
     <div id="sumList" class="grid3"></div>
     <div class="row"><button class="btn" id="resetAll">체크 기록 모두 지우기</button><span class="small muted" id="resetMsg"></span></div>
@@ -787,6 +826,24 @@ input[type=range] { width: 100%; accent-color: var(--acc); }
   <button id="timerPause">일시정지</button><button id="timerClose">닫기</button>
 </div>
 <div class="lb" id="lb" hidden><img id="lbImg" alt=""></div>
+<div class="ov" id="gate" hidden>
+  <form class="ov-card" id="gateForm" role="dialog" aria-modal="true" aria-labelledby="gateH">
+    <h3 id="gateH">👨‍🏫 강사 화면</h3>
+    <p class="small muted" style="margin:0">강사 비밀번호를 입력하세요.</p>
+    <input type="password" id="gatePw" autocomplete="current-password" aria-label="강사 비밀번호">
+    <p class="err" id="gateMsg" aria-live="polite"></p>
+    <div class="row" style="justify-content:flex-end"><button type="button" class="btn" id="gateCancel">취소</button><button type="submit" class="btn solid">입장</button></div>
+  </form>
+</div>
+<div class="ov" id="qrOv" hidden>
+  <div class="ov-card qr" role="dialog" aria-modal="true" aria-label="연수생 참여 QR">
+    <h3>연수생 화면으로 들어오세요</h3>
+    <div id="qrBox"></div>
+    <div class="url" id="qrUrl"></div>
+    <button type="button" class="btn" id="qrClose">닫기</button>
+  </div>
+</div>
+<script src="assets/qrcode.js"></script>
 
 <script>
 (() => {
@@ -936,6 +993,54 @@ input[type=range] { width: 100%; accent-color: var(--acc); }
     if (e.target.closest('#lb')) $('#lb').hidden = true;
   });
   addEventListener('keydown', e => { if (e.key === 'Escape') $('#lb').hidden = true; });
+
+  /* ---------- role: 연수생 / 강사 ---------- */
+  // 강사 화면 비밀번호 — 여기서 바꾸세요. (정적 페이지라 소스 보기로 알 수 있는 ‘가벼운 잠금’입니다)
+  const INSTRUCTOR_PW = '1234';
+  const root = document.documentElement;
+  const sess = { get(k) { try { return sessionStorage.getItem(k); } catch { return null; } }, set(k, v) { try { sessionStorage.setItem(k, v); } catch {} } };
+  function setRole(r) {
+    root.dataset.role = r;
+    $('#tab-s').setAttribute('aria-selected', String(r === 'student'));
+    $('#tab-t').setAttribute('aria-selected', String(r === 'instructor'));
+    const u = new URL(location.href);
+    if (r === 'instructor') u.searchParams.set('role', 'instructor'); else u.searchParams.delete('role');
+    history.replaceState(null, '', u);
+    document.title = r === 'instructor' ? 'AI 창작 따라하기 · 강사' : 'AI 창작 따라하기';
+  }
+  function openGate() {
+    if (sess.get('aiedap-instructor') === '1') { setRole('instructor'); return; }
+    $('#gateMsg').textContent = ''; $('#gatePw').value = ''; $('#gate').hidden = false; $('#gatePw').focus();
+  }
+  function closeGate() { $('#gate').hidden = true; }
+  $('#tab-s').addEventListener('click', () => setRole('student'));
+  $('#tab-t').addEventListener('click', openGate);
+  $('#gateCancel').addEventListener('click', () => { closeGate(); setRole('student'); });
+  $('#gateForm').addEventListener('submit', e => {
+    e.preventDefault();
+    if ($('#gatePw').value !== INSTRUCTOR_PW) { $('#gateMsg').textContent = '비밀번호가 맞지 않아요.'; $('#gatePw').select(); return; }
+    sess.set('aiedap-instructor', '1'); closeGate(); setRole('instructor');
+  });
+  // 강사 메모 켜기/끄기 (화면에 띄울 때 감추기)
+  function setNotes(on) {
+    root.dataset.notes = on ? 'on' : 'off';
+    $('#btnNotes').setAttribute('aria-pressed', String(on));
+    $('#btnNotes').textContent = on ? '강사 메모 숨기기' : '강사 메모 보기';
+    store.set('aiedap-notes', on);
+  }
+  $('#btnNotes').addEventListener('click', () => setNotes(root.dataset.notes === 'off'));
+  setNotes(store.get('aiedap-notes', true));
+  // 참여 QR: 연수생 화면 주소(쿼리·해시 없이)
+  $('#btnQr').addEventListener('click', () => {
+    const url = location.origin + location.pathname;
+    let svg = '';
+    try { const qr = qrcode(0, 'M'); qr.addData(unescape(encodeURIComponent(url))); qr.make(); svg = qr.createSvgTag({ cellSize: 8, margin: 2, scalable: true }); } catch { svg = '<p>QR을 만들지 못했어요.</p>'; }
+    $('#qrBox').innerHTML = svg; $('#qrUrl').textContent = url.replace(/^https?:\/\//, ''); $('#qrOv').hidden = false;
+  });
+  $('#qrClose').addEventListener('click', () => { $('#qrOv').hidden = true; });
+  $('#qrOv').addEventListener('click', e => { if (e.target === $('#qrOv')) $('#qrOv').hidden = true; });
+  addEventListener('keydown', e => { if (e.key !== 'Escape') return; $('#qrOv').hidden = true; if (!$('#gate').hidden) { closeGate(); setRole('student'); } });
+  if (new URLSearchParams(location.search).get('role') === 'instructor') { setRole('student'); openGate(); } else setRole('student');
 
   progress(); show();
 })();
