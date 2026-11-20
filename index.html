@@ -81,6 +81,11 @@ section.view { display: grid; gap: 28px; }
 .eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--acc); text-transform: uppercase; }
 .lead { color: var(--muted); max-width: 62ch; margin-top: 8px; }
 .head { display: grid; gap: 6px; }
+.intro { display: flex; gap: 24px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.intro .head { flex: 1 1 420px; min-width: 0; }
+.qr-box { flex: 0 0 auto; display: grid; justify-items: center; gap: 8px; padding: 14px 16px 12px; border-radius: var(--r); background: #fff; border: 1px solid var(--line); }
+.qr-box img { width: 140px; height: auto; border: 0; border-radius: 0; display: block; }
+.qr-box figcaption { color: #1b2233; font-size: 15px; font-weight: 700; letter-spacing: .01em; }
 
 .block { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 22px; display: grid; gap: 16px; min-width: 0; }
 .block.tint { background: var(--acc-soft); border-color: transparent; }
@@ -286,12 +291,18 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
 
 <!-- ============ START ============ -->
 <section class="view" id="v-start" data-view="start">
+  <div class="intro">
   <div class="head">
     <div class="eyebrow">AI와 함께하는 교과 혁신</div>
     <h2>최신 기술 체험과 적용 실습</h2>
     <p class="lead only-s">강사 화면을 보면서 이 페이지에서 같은 단계를 따라 해 주세요. 끝낸 단계는 체크하면 위쪽 진행 막대에 반영됩니다. 체크 기록은 지금 쓰는 브라우저에만 남습니다.</p>
     <p class="lead only-t">강사용 화면입니다. 이 화면을 띄우고 진행하세요. ‘📡 진행 공유’가 켜져 있으면 강사가 고른 단계가 연수생 화면에 실시간으로 전달됩니다. 강사 메모(점선 상자)는 연수생에게 보이지 않으며, 화면에 띄울 때 감추려면 위쪽 ‘강사 메모 숨기기’를 누르세요.</p>
     <p class="small muted">강사 손우재 · 경남권역 명진초</p>
+  </div>
+    <figure class="qr-box">
+      <img src="img/qr.png" alt="이 페이지로 가는 QR 코드" width="140" height="148">
+      <figcaption>숏.한국/아이에답창작</figcaption>
+    </figure>
   </div>
 
 <div class="tnote only-t"><span class="tl">👨‍🏫 진행 안내</span><ul><li>위쪽 <b>📱 참여 QR</b>을 띄워 연수생이 휴대폰·노트북으로 연수생 화면에 들어오게 합니다.</li><li>아래 ‘시작 전 준비’ 세 가지(Google 로그인 Chrome, 번역기 탭, 이어폰)를 함께 확인하고 시작합니다.</li><li>진행 순서: 01 이미지(Quick, Draw! 5분 · Say What You See 5분) → 02 음악(Blob Opera 2분+5분, Gemini·Canva) → 03 글쓰기(다음 토큰 체험) → 실습 30초 미래 뉴스(40분) → 마무리</li></ul></div>
