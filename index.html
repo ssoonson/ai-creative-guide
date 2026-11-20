@@ -125,7 +125,6 @@ ol.flow span { font-size: 14px; color: var(--muted); line-height: 1.5; }
 :root[data-theme="dark"] .btn.go { color: #12151d; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.go { color: #12151d; } }
 .btn.go::after { content: "↗"; font-size: 14px; }
-.btn.timer::before { content: ""; width: 14px; height: 14px; border-radius: 50%; border: 2px solid currentColor; box-sizing: border-box; background: conic-gradient(currentColor 0 25%, transparent 0); }
 .btn.sm { padding: 7px 11px; font-size: 14px; }
 .chips { display: flex; gap: 6px; flex-wrap: wrap; }
 .chip { font: 14px var(--body); padding: 5px 11px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
@@ -203,12 +202,6 @@ input[type=range] { width: 100%; accent-color: var(--acc); }
 .newsmock .hl i { font-style: normal; background: #e2343a; color: #fff; font-size: .55em; padding: .15em .5em; border-radius: 4px; }
 .newsmock .ticker { background: #0d2a52; font-size: 2.6cqw; padding: .5em 4%; }
 
-/* timer */
-.timerbox { position: fixed; z-index: 40; right: max(16px, calc(env(safe-area-inset-right, 0px) + 16px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); background: var(--ink); color: var(--bg); border-radius: 16px; padding: 12px 14px 12px 18px; display: flex; align-items: center; gap: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
-.timerbox .tl { font-size: 13px; opacity: .8; }
-.timerbox .tv { font-family: var(--mono); font-size: 30px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1; }
-.timerbox.done .tv { color: #ffb35c; }
-.timerbox button { font: 500 14px var(--body); background: transparent; color: var(--bg); border: 1px solid currentColor; border-radius: 8px; padding: 6px 10px; cursor: pointer; opacity: .85; }
 
 /* lightbox */
 .lb { position: fixed; inset: 0; z-index: 50; background: rgba(10,12,18,.88); display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); cursor: zoom-out; }
@@ -237,7 +230,7 @@ nav.tabs a.live { box-shadow: 0 0 0 2px var(--sto); }
 nav.tabs a.live::after { content: "진행 중"; font-size: 11px; font-weight: 700; color: var(--sto); }
 nav.tabs a.live[aria-current="page"]::after { color: inherit; }
 .ov-card input[type=email] { width: 100%; font: 16px var(--body); padding: 10px 12px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
-html[data-role="student"] .only-t, html[data-role="student"] [data-timer], html[data-role="instructor"] .only-s { display: none !important; }
+html[data-role="student"] .only-t, html[data-role="instructor"] .only-s { display: none !important; }
 html[data-role="instructor"][data-notes="off"] .tnote { display: none !important; }
 .tnote { border: 2px dashed var(--acc); background: var(--surface); border-radius: 10px; padding: 12px 16px; display: grid; gap: 4px; font-size: 15px; }
 .tnote > .tl { font-size: 12px; font-weight: 700; color: var(--acc); letter-spacing: .04em; }
@@ -297,7 +290,7 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
     <div class="eyebrow">AI와 함께하는 교과 혁신</div>
     <h2>최신 기술 체험과 적용 실습</h2>
     <p class="lead only-s">강사 화면을 보면서 이 페이지에서 같은 단계를 따라 해 주세요. 끝낸 단계는 체크하면 위쪽 진행 막대에 반영됩니다. 체크 기록은 지금 쓰는 브라우저에만 남습니다.</p>
-    <p class="lead only-t">강사용 화면입니다. 이 화면을 띄우고 진행하세요. ‘📡 진행 공유’가 켜져 있으면 강사가 고른 단계와 타이머가 연수생 화면에 실시간으로 전달됩니다. 강사 메모(점선 상자)는 연수생에게 보이지 않으며, 화면에 띄울 때 감추려면 위쪽 ‘강사 메모 숨기기’를 누르세요.</p>
+    <p class="lead only-t">강사용 화면입니다. 이 화면을 띄우고 진행하세요. ‘📡 진행 공유’가 켜져 있으면 강사가 고른 단계가 연수생 화면에 실시간으로 전달됩니다. 강사 메모(점선 상자)는 연수생에게 보이지 않으며, 화면에 띄울 때 감추려면 위쪽 ‘강사 메모 숨기기’를 누르세요.</p>
     <p class="small muted">강사 손우재 · 경남권역 명진초</p>
   </div>
 
@@ -368,7 +361,6 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
     <div class="row">
       <a class="btn go" href="https://quickdraw.withgoogle.com/" target="_blank" rel="noopener">Quick, Draw! 열기</a>
       <a class="btn" href="https://www.autodraw.com/" target="_blank" rel="noopener">AutoDraw 열기</a>
-      <button class="btn timer" data-timer="300" data-label="Quick, Draw!">5분 타이머</button>
     </div>
     <details>
       <summary>Quick, Draw!와 AutoDraw는 어떻게 연결되나요?</summary>
@@ -449,7 +441,6 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
     </div>
     <div class="row">
       <a class="btn go" href="https://artsandculture.google.com/experiment/say-what-you-see/jwG3m7wQShZngw" target="_blank" rel="noopener">Say What You See 열기</a>
-      <button class="btn timer" data-timer="300" data-label="Say What You See">5분 타이머</button>
     </div>
 <div class="tnote only-t"><span class="tl">👨‍🏫 강사 메모</span><ul><li>정답 프롬프트는 연수생 화면에 나오지 않습니다. 활동을 마친 뒤 이 화면에서 공개하세요.</li><li>영어만 지원하므로 번역기 탭을 미리 열어 두었는지 확인합니다.</li></ul></div>
     <p class="foot">출처: Google Arts and Culture, Say What You See</p>
@@ -496,10 +487,8 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
     </div>
     <div class="row">
       <a class="btn go" href="https://artsandculture.google.com/experiment/blob-opera/AAHWrq360NcGbw" target="_blank" rel="noopener">Blob Opera 열기</a>
-      <button class="btn timer" data-timer="120" data-label="Blob Opera 자유 탐색">2분 타이머</button>
-      <button class="btn timer" data-timer="300" data-label="Blob Opera 개별 활동">5분 타이머</button>
     </div>
-<div class="tnote only-t"><span class="tl">👨‍🏫 강사 메모</span><ul><li>소리가 나는 활동입니다. 이어폰을 확인하고, 2분 자유 탐색 → 5분 개별 활동 순서로 타이머를 씁니다.</li><li>‘실제 가수의 녹음이 아니라 AI가 학습해 새로 만든 소리’라는 점을 한 번 더 짚어 줍니다.</li></ul></div>
+<div class="tnote only-t"><span class="tl">👨‍🏫 강사 메모</span><ul><li>소리가 나는 활동입니다. 이어폰을 확인하고, 2분 자유 탐색 → 5분 개별 활동 순서로 진행합니다.</li><li>‘실제 가수의 녹음이 아니라 AI가 학습해 새로 만든 소리’라는 점을 한 번 더 짚어 줍니다.</li></ul></div>
     <p><b>Blob Opera로 수업하기</b></p>
     <div class="grid3">
       <div class="block" style="padding:14px"><span class="kind" style="justify-self:start">음높이와 가락</span><p class="small">블롭을 위아래로 움직이며 높낮이 변화를 듣고 짧은 가락 표현하기</p></div>
@@ -661,8 +650,8 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
         <li><b>편집·완성</b><span>Clipchamp 등</span></li>
       </ol>
     </div>
-<div class="tnote only-t"><span class="tl">👨‍🏫 강사 메모</span><ul><li>실습은 약 40분입니다. 시작할 때 40분 타이머를 띄워 두세요.</li><li>1단계에 들어가기 전에 아래 ‘짚고 가기: 가상 뉴스를 만들 때’ 세 가지 원칙을 먼저 안내합니다.</li><li>AI Studio·Claude 메뉴 이름과 요금 정책은 바뀔 수 있으니 연수 전에 화면을 확인해 두세요.</li></ul></div>
-    <div class="row"><button class="btn timer" data-timer="2400" data-label="미래 뉴스 실습">40분 타이머</button>
+<div class="tnote only-t"><span class="tl">👨‍🏫 강사 메모</span><ul><li>실습은 약 40분입니다.</li><li>1단계에 들어가기 전에 아래 ‘짚고 가기: 가상 뉴스를 만들 때’ 세 가지 원칙을 먼저 안내합니다.</li><li>AI Studio·Claude 메뉴 이름과 요금 정책은 바뀔 수 있으니 연수 전에 화면을 확인해 두세요.</li></ul></div>
+    <div class="row">
       <a class="btn go" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini 열기</a>
       <a class="btn go" href="https://aistudio.google.com/" target="_blank" rel="noopener">AI Studio 열기</a></div>
   </div>
@@ -844,10 +833,6 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
 </section>
 </main>
 
-<div class="timerbox" id="timerBox" hidden role="timer" aria-live="off">
-  <div><div class="tl" id="timerLabel">활동</div><div class="tv" id="timerVal">05:00</div></div>
-  <button id="timerPause" class="only-t">일시정지</button><button id="timerClose">닫기</button>
-</div>
 <div class="lb" id="lb" hidden><img id="lbImg" alt=""></div>
 <div class="ov" id="gate" hidden>
   <form class="ov-card" id="gateForm" role="dialog" aria-modal="true" aria-labelledby="gateH">
@@ -1091,7 +1076,6 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
     firstState = false;
     $('#chkFollow').checked = state.follow !== false;
     renderLive();
-    applyTimer(state.timer || null);
   }
   function renderLive() {
     const v = views.includes(state.view) ? state.view : null;
@@ -1112,45 +1096,7 @@ html[data-role="instructor"][data-notes="off"] .tnote { display: none !important
   setBcast(bcastOn());
   $('#chkFollow').addEventListener('change', e => push({ follow: e.target.checked }));
 
-  /* ---------- timer (강사가 시작하면 연수생 화면에도 같은 시간이 보임) ---------- */
-  let T = null, tInt = null, dismissed = null, beeped = null;
-  const fmt = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
-  function beep() { try { const a = new (window.AudioContext || window.webkitAudioContext)(); [0, .35, .7].forEach(d => { const o = a.createOscillator(), g = a.createGain(); o.frequency.value = 880; o.connect(g); g.connect(a.destination); g.gain.setValueAtTime(.2, a.currentTime + d); g.gain.exponentialRampToValueAtTime(.001, a.currentTime + d + .3); o.start(a.currentTime + d); o.stop(a.currentTime + d + .3); }); } catch {} }
-  function applyTimer(t) {
-    clearInterval(tInt); tInt = null; T = t;
-    const stale = t && t.left == null && t.end < Date.now() - 60000; // 끝난 지 1분 지난 타이머는 감춤
-    if (!t || stale || dismissed === t.end) { $('#timerBox').hidden = true; return; }
-    $('#timerBox').hidden = false;
-    $('#timerPause').textContent = t.left != null ? '계속' : '일시정지';
-    tick(); if (t.left == null) tInt = setInterval(tick, 250);
-  }
-  function tick() {
-    if (!T) return;
-    const s = Math.max(0, Math.ceil((T.left != null ? T.left : T.end - Date.now()) / 1000));
-    const done = s === 0;
-    $('#timerVal').textContent = fmt(s);
-    $('#timerLabel').textContent = T.label + (done ? ' · 끝' : '');
-    $('#timerBox').classList.toggle('done', done);
-    $('#timerPause').hidden = done;
-    if (done) { clearInterval(tInt); tInt = null; if (beeped !== T.end && T.end > Date.now() - 5000) { beeped = T.end; beep(); } }
-  }
-  function setTimer(t) { dismissed = null; push({ timer: t }); applyTimer(t); }
-  document.addEventListener('click', e => {
-    const b = e.target.closest('[data-timer]'); if (!b) return;
-    setTimer({ label: String(b.dataset.label).slice(0, 40), end: Date.now() + (+b.dataset.timer) * 1000, left: null });
-  });
-  $('#timerPause').addEventListener('click', () => {
-    if (!T) return;
-    if (T.left == null) setTimer({ label: T.label, end: T.end, left: Math.max(0, T.end - Date.now()) });
-    else setTimer({ label: T.label, end: Date.now() + T.left, left: null });
-  });
-  // 강사가 닫으면 모두에게서 닫히고, 연수생이 닫으면 자기 화면에서만 닫힘
-  $('#timerClose').addEventListener('click', () => {
-    if (root.dataset.role === 'instructor') setTimer(null);
-    else { dismissed = T && T.end; applyTimer(T); }
-  });
-
-  // 동기화 시작 (타이머 등 위 선언이 모두 끝난 뒤)
+  // 동기화 시작 (위 선언이 모두 끝난 뒤)
   const ready = (async () => {
     if (!CFG) { setPill('⚠ config.js 오류', 'warn'); return; }
     if (!CFG.firebase) { sync = makeDemoSync(); setPill('체험 모드'); $('#syncPill').title = 'config.js에 Firebase 설정을 넣기 전에는 이 브라우저의 탭끼리만 동기화돼요.'; }
